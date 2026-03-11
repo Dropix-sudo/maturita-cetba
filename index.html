@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
     <title>Selekce Četby</title>
     <style>
@@ -108,14 +108,14 @@
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal-content { background: var(--bg-panel); padding: 25px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .modal-content h3 { margin-top: 0; color: var(--accent-orange); margin-bottom: 15px; }
-        .modal-content p { color: var(--text-main); font-size: 14px; line-height: 1.5; margin-bottom: 20px;}
+        .modal-content p { color: var(--text-main); font-size: 14px; line-height: 1.5; text-align: left; margin-bottom: 20px;}
         .modal-close { background: var(--bg-card); border: 1px solid var(--border-color); color: white; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: var(--transition); }
         .modal-close:hover { background: var(--bg-hover); }
         .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
         .modal-btn-row button { flex: 1; }
 
-        /* Kontejner pro QR kód */
-        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; }
+        /* QR kód img */
+        #qrImage { display: block; margin: 0 auto 15px auto; width: 200px; height: 200px; border-radius: 8px; background: white; padding: 10px; }
         .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; }
 
         @media (max-width: 900px) {
@@ -172,7 +172,7 @@
             <h3>Tvůj seznam (QR kód)</h3>
             <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na GitHubu.</p>
             
-            <div id="qrCodeContainer"></div>
+            <img id="qrImage" src="" alt="QR Kód">
 
             <input type="text" id="qrLink" class="share-link-input" readonly onclick="this.select()">
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
@@ -200,7 +200,7 @@
         <div class="personal-info-wrapper">
             <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Osobní údaje <span id="infoArrow">▼</span></button>
             <div class="personal-info-content" id="personalInfoContent">
-                <input type="text" id="studentName" placeholder="Jméno a příjmení (např. Jan Novák)">
+                <input type="text" id="studentName" placeholder="Jméno (např. Jan Novák)">
                 <input type="text" id="studentClass" placeholder="Třída (např. 4.A)">
                 <input type="text" id="schoolYear" placeholder="Školní rok (např. 2025/2026)">
                 <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje se ukládají pouze v tvém prohlížeči.</div>
@@ -267,7 +267,7 @@
             }
         }
 
-        // === KOMPLETNÍ SEZNAM 212 DĚL ===
+        // === KOMPLETNÍ SEZNAM 212 DĚL VČETNĚ LITERÁRNÍCH DRUHŮ ===
         const books = [
             { id: 1, author: "Alighieri Dante", title: "Božská komedie", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
             { id: 2, author: "Neznámý", title: "Bible", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
@@ -505,9 +505,15 @@
                 const savedBooks = localStorage.getItem('selectedBooks');
                 if (savedBooks) {
                     const parsed = JSON.parse(savedBooks);
-                    if (Array.isArray(parsed)) selectedIds = parsed;
+                    if (Array.isArray(parsed)) {
+                        selectedIds = parsed;
+                    } else {
+                        localStorage.removeItem('selectedBooks');
+                    }
                 }
-            } catch(e) { localStorage.removeItem('selectedBooks'); }
+            } catch(e) {
+                localStorage.removeItem('selectedBooks');
+            }
 
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -516,7 +522,7 @@
                     const ids = booksParam.split(',').map(Number);
                     selectedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    if(selectedIds.length > 0 && window.innerWidth <= 900) switchMobileTab('list');
+                    if(selectedIds.length > 0 && window.innerWidth <= 900) { switchMobileTab('list'); }
                 }
             } catch(e) {}
             
@@ -645,7 +651,7 @@
             return true;
         }
 
-        // --- ZCELA OPRAVENÝ QR KÓD (GENEROVÁNÍ AŽ PO ZOBRAZENÍ MODÁLU) ---
+        // --- SPRAVENÝ QR KÓD PŘES QRIOUS (BEZPEČNĚ) ---
         function generateQR() {
             if (!checkMaturitaRules()) return;
             
@@ -655,30 +661,27 @@
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
             document.getElementById('qrLink').value = shareUrl;
 
-            // Zobrazení modálu
+            // Zobrazení modálu PRVNÍ
             document.getElementById('qrModal').style.display = 'flex';
 
-            // Zpoždění zajistí, že qrcodejs vykreslí obrázek do již viditelného okna (zabrání bílému čtverci)
+            // Generování a vložení data URL do obrázku
             setTimeout(() => {
-                const container = document.getElementById('qrCodeContainer');
-                container.innerHTML = ''; 
                 try {
-                    new QRCode(container, {
-                        text: shareUrl,
-                        width: 200,
-                        height: 200,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.L
+                    const qr = new QRious({
+                        value: shareUrl,
+                        size: 250,
+                        background: 'white',
+                        foreground: 'black',
+                        level: 'L'
                     });
+                    document.getElementById('qrImage').src = qr.toDataURL();
                 } catch(e) {
-                    console.error("QR Error:", e);
-                    container.innerHTML = '<span style="color:red">QR kód se nepodařilo vygenerovat.</span>';
+                    console.error("QR rendering failed", e);
                 }
-            }, 100);
+            }, 50);
         }
 
-        // --- BÍLÉ PDF A 100% FUNKČNÍ LOGO V HTML ---
+        // --- BÍLÉ PDF S KRESLENÝM LOGEM ---
         function generatePDF() {
             if (!checkMaturitaRules()) return;
 
@@ -686,37 +689,35 @@
             const sClass = document.getElementById('studentClass').value;
             const sYear = document.getElementById('schoolYear').value;
 
-            // Čistě bílý podklad, černé texty, ručně skládané G-logo, které html2pdf nikdy nevymaže
             let printHTML = `
                 <div style="width: 210mm; min-height: 297mm; background-color: #ffffff; color: #000000; padding: 20mm; box-sizing: border-box; font-family: Calibri, 'Segoe UI', Arial, sans-serif;">
                     
-                    <table style="width: 100%; border-bottom: 1px solid #000000; padding-bottom: 15px; margin-bottom: 30px;">
+                    <table style="width: 100%; border-bottom: 1px solid #000000; padding-bottom: 15px; margin-bottom: 30px; border-collapse: collapse;">
                         <tr>
-                            <td style="width: 25%; text-align: left; vertical-align: middle;">
+                            <td style="width: 20%; text-align: left; vertical-align: middle;">
                                 <div style="position: relative; width: 80px; height: 90px; text-align: center; color: #000000;">
-                                    <div style="font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; position: absolute; top: 0; width: 100%;">Gymnázium</div>
+                                    <div style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; position: absolute; top: 0; width: 100%;">Gymnázium</div>
                                     <div style="font-family: 'Times New Roman', serif; font-size: 80px; line-height: 1; position: absolute; top: 5px; width: 100%;">G</div>
                                     <div style="position: absolute; top: 35px; width: 100%; height: 50px; display: flex; justify-content: center; align-items: flex-end;">
-                                        <div style="width: 2px; height: 30px; background: #000000; margin: 0 4px;"></div>
-                                        <div style="width: 2px; height: 45px; background: #000000; margin: 0 4px;"></div>
-                                        <div style="width: 2px; height: 30px; background: #000000; margin: 0 4px;"></div>
+                                        <div style="width: 1px; height: 30px; background: #000000; margin: 0 3px;"></div>
+                                        <div style="width: 1px; height: 45px; background: #000000; margin: 0 3px;"></div>
+                                        <div style="width: 1px; height: 30px; background: #000000; margin: 0 3px;"></div>
                                     </div>
-                                    <div style="font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; position: absolute; bottom: -5px; width: 100%;">Příbram</div>
+                                    <div style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; position: absolute; bottom: -5px; width: 100%;">Příbram</div>
                                 </div>
                             </td>
-                            <td style="width: 50%; text-align: center; vertical-align: middle;">
-                                <div style="font-size: 11pt; letter-spacing: 1px; font-weight: bold; margin-top: 20px;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
+                            <td style="width: 80%; text-align: center; vertical-align: middle;">
+                                <div style="font-size: 11pt; letter-spacing: 1px; color: #000000; font-weight: bold;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
                             </td>
-                            <td style="width: 25%;"></td>
                         </tr>
                     </table>
                     
-                    <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="text-align: center; margin-bottom: 40px; color: #000000;">
                         <h1 style="font-size: 22pt; font-weight: normal; margin: 0 0 10px 0; letter-spacing: 1px;">SEZNAM ČETBY</h1>
                         <h2 style="font-size: 12pt; font-weight: normal; margin: 0; line-height: 1.4;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</h2>
                     </div>
                     
-                    <table style="width: 100%; font-size: 11pt; margin-bottom: 15px; border-collapse: collapse;">
+                    <table style="width: 100%; font-size: 11pt; margin-bottom: 15px; color: #000000; border-collapse: collapse;">
                         <tr>
                             <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno a příjmení:</td>
                             <td style="border-bottom: 1px solid #000000; text-align: center; padding: 0 5px; width: 45%;">${sName || ''}</td>
@@ -727,7 +728,7 @@
                         </tr>
                     </table>
 
-                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 40px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 40px; color: #000000;">
                         <thead>
                             <tr>
                                 <th style="border: 1px solid #000000; padding: 6px 10px; width: 15%; text-align: center; font-weight: normal;">Číslo otázky</th>
@@ -752,7 +753,7 @@
             printHTML += `
                         </tbody>
                     </table>
-                    <div style="float: right; width: 250px; text-align: center; font-size: 10pt; margin-top: 20px;">
+                    <div style="float: right; width: 250px; text-align: center; font-size: 10pt; color: #000000; margin-top: 20px;">
                         <div style="border-top: 1px solid #000000; margin-bottom: 5px;"></div>
                         podpis studenta
                     </div>
@@ -769,7 +770,7 @@
                     margin: 0, 
                     filename: pdfName, 
                     image: { type: 'jpeg', quality: 1 }, 
-                    html2canvas: { scale: 2, useCORS: true, background: '#ffffff' }, 
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, 
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
                 };
                 
