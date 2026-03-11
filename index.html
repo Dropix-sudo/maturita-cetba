@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
     <title>Selekce Četby</title>
     <style>
@@ -35,13 +35,10 @@
             .print-only { display: block !important; }
         }
 
-        /* Desktop Layout */
         .sidebar { width: 320px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; }
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
-        
         .mobile-nav { display: none; }
 
-        /* UI Elements */
         .logo { font-size: 22px; font-weight: 800; margin-bottom: 24px; letter-spacing: 1px; }
         .logo span { color: var(--accent-orange); }
 
@@ -107,7 +104,6 @@
 
         .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
-        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal-content { background: var(--bg-panel); padding: 25px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; }
         .modal-content h3 { margin-top: 0; color: var(--accent-orange); }
@@ -118,10 +114,10 @@
         .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
         .modal-btn-row button { flex: 1; }
 
-        #qrCodeContainer { display: flex; justify-content: center; background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        /* Klasický image pro spolehlivé zobrazení QR kódu */
+        #qrImage { background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; width: 200px; height: 200px; display: block; margin-left: auto; margin-right: auto; max-width: 100%; height: auto;}
         .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; }
 
-        /* ====== MOBILE RESPONSIVE LAYOUT ====== */
         @media (max-width: 900px) {
             body { padding-bottom: 60px; }
             .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; }
@@ -165,7 +161,8 @@
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <h3>Tvůj seznam (QR kód)</h3>
-            <div id="qrCodeContainer"></div>
+            <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Upozornění: Sdílíš lokální odkaz. Aby to fungovalo ostatním, musí být aplikace uložena na internetu (GitHub).</p>
+            <img id="qrImage" src="" alt="QR kód pro sdílení">
             <input type="text" id="qrLink" class="share-link-input" readonly onclick="this.select()">
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
@@ -260,13 +257,11 @@
 
         function triggerInstall() {
             if (deferredPrompt) {
-                // Toto vyvolá nativní Android / Desktop instalační tabulku!
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => { 
                     deferredPrompt = null; 
                 });
             } else {
-                // iOS / Safari / Desktop bez podpory hodí tento náš návod
                 document.getElementById('installModal').style.display = 'flex';
             }
         }
@@ -583,6 +578,7 @@
             updateApp();
         }
 
+        // --- OPRAVENÉ GENEROVÁNÍ QR KÓDU PŘES spolehlivější knihovnu ---
         function generateQR() {
             if (selectedIds.length !== 20) {
                 alert("Pro sdílení seznamu přes QR kód musíš mít vybráno přesně 20 knih!");
@@ -593,21 +589,25 @@
             const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
 
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
-
-            const qrContainer = document.getElementById('qrCodeContainer');
-            qrContainer.innerHTML = ''; 
-            
-            new QRCode(qrContainer, {
-                text: shareUrl,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.L
-            });
-
             document.getElementById('qrLink').value = shareUrl;
-            document.getElementById('qrModal').style.display = 'flex';
+
+            // Vygenerujeme datovou URL a nastavíme ji přímo do img atributu src
+            QRCode.toDataURL(shareUrl, {
+                width: 200,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#ffffff'
+                }
+            }, function (err, url) {
+                if (err) {
+                    console.error(err);
+                    alert("Chyba při generování QR kódu.");
+                    return;
+                }
+                document.getElementById('qrImage').src = url;
+                document.getElementById('qrModal').style.display = 'flex';
+            });
         }
 
         function generatePDF() {
