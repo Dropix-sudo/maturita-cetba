@@ -5,18 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 
     <title>Selekce Četby</title>
     <style>
-        :root { --bg-main: #121212; --bg-panel: #1a1a1a; --bg-card: #242424; --bg-hover: #333333; --text-main: #ffffff; --text-muted: #a0a0a0; --accent-green: #00e676; --accent-red: #ff1744; --accent-orange: #ff6d00; --accent-blue: #2979ff; --border-color: #383838; --radius: 12px; --transition: all 0.2s; }
-        body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; user-select: none; }
+        :root {
+            --bg-main: #121212; --bg-panel: #1a1a1a; --bg-card: #242424; --bg-hover: #333333;
+            --text-main: #ffffff; --text-muted: #a0a0a0;
+            --accent-green: #00e676; --accent-red: #ff1744; --accent-orange: #ff6d00; --accent-blue: #2979ff;
+            --border-color: #383838; --radius: 12px; --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; user-select: none; }
+
         .print-only { display: none; }
         @media print {
             @page { margin: 1cm; }
@@ -24,72 +33,98 @@
             .sidebar, .main-content, .modal-overlay, .mobile-nav { display: none !important; }
             .print-only { display: block !important; }
         }
-        .sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-main); position: relative; }
+
+        .sidebar { width: 320px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
         .mobile-nav { display: none; }
+
         .logo { font-size: 22px; font-weight: 800; margin-bottom: 24px; letter-spacing: 1px; }
         .logo span { color: var(--accent-orange); }
+
         .personal-info-wrapper { margin-bottom: 24px; }
         .btn-toggle-info { width: 100%; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; transition: var(--transition); }
         .btn-toggle-info:hover { background: var(--bg-hover); }
-        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); }
         .personal-info-content.open { display: flex; }
         .personal-info-content input { padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: white; outline: none; font-size: 13px; }
         .personal-info-content input:focus { border-color: var(--accent-orange); }
         .disclaimer-text { font-size: 11px; color: #888; text-align: center; margin-top: 5px; padding-top: 10px; border-top: 1px dashed var(--border-color); line-height: 1.4; }
         .disclaimer-text span { color: var(--accent-green); font-weight: bold; }
+
         .status-box { background: linear-gradient(145deg, #2a2a2a, #1f1f1f); border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .status-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
         .status-total { font-size: 28px; font-weight: 800; margin-top: 5px; }
+
         .section-header { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted); letter-spacing: 0.5px; }
+
         .criteria-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
         .crit-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
         .crit-btn:hover { background: var(--bg-hover); }
         .crit-btn.active-filter { border-color: var(--accent-orange); box-shadow: 0 0 0 1px var(--accent-orange); }
         .crit-btn .count.met { color: var(--accent-green); font-weight: bold; }
         .crit-btn .count.unmet { color: var(--accent-red); }
+
         .selected-books { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
         .selected-item { background: var(--bg-main); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 13px; }
         .selected-item-info strong { display: block; margin-bottom: 2px; }
         .selected-item-author { font-size: 11px; color: var(--text-muted); }
-        .btn-remove { background: rgba(255,23,68,0.1); border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
+
+        .btn-remove { background: rgba(255, 23, 68, 0.1); border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
         .btn-remove:hover { background: var(--accent-red); color: white; }
+
         .action-btns { display: flex; flex-direction: column; gap: 10px; }
         .btn-modern { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-install { background: #2e7d32; color: white; } .btn-install:hover { background: #388e3c; }
-        .btn-pdf { background: var(--accent-orange); color: white; box-shadow: 0 4px 10px rgba(255,109,0,0.3); } .btn-pdf:hover { background: #e66200; transform: translateY(-2px); }
-        .btn-share { background: var(--accent-blue); color: white; } .btn-share:hover { background: #1c54b2; }
-        .btn-clear { background: transparent; color: var(--accent-red); border: 1px solid rgba(255,23,68,0.3); } .btn-clear:hover { background: rgba(255,23,68,0.1); }
+        .btn-install { background-color: #2e7d32; color: white; }
+        .btn-install:hover { background-color: #388e3c; }
+        .btn-pdf { background-color: var(--accent-orange); color: white; box-shadow: 0 4px 10px rgba(255, 109, 0, 0.3); }
+        .btn-pdf:hover { background-color: #e66200; transform: translateY(-2px); }
+        .btn-share { background-color: var(--accent-blue); color: white; }
+        .btn-share:hover { background-color: #1c54b2; }
+        .btn-clear { background-color: transparent; color: var(--accent-red); border: 1px solid rgba(255, 23, 68, 0.3); }
+        .btn-clear:hover { background-color: rgba(255, 23, 68, 0.1); }
+
         .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; }
         .search-bar input { width: 100%; padding: 16px 20px; background: var(--bg-main); border: 2px solid var(--border-color); color: white; border-radius: var(--radius); font-size: 16px; box-sizing: border-box; outline: none; }
         .search-bar input:focus { border-color: var(--accent-orange); }
+
         .books-container { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
         .book-card { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px 20px; text-align: left; cursor: pointer; transition: var(--transition); font-size: 14px; gap: 10px;}
         .book-card:hover { background: var(--bg-hover); border-color: #555; }
-        .book-card.selected { background: rgba(0,230,118,0.08); border-color: var(--accent-green); }
+        .book-card.selected { background: rgba(0, 230, 118, 0.08); border-color: var(--accent-green); }
+
         .check-circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
         .check-circle::after { content: '✓'; color: transparent; font-size: 12px; font-weight: bold; }
         .book-card.selected .check-circle { background: var(--accent-green); border-color: var(--accent-green); }
         .book-card.selected .check-circle::after { color: #000; }
+
         .book-title { font-weight: 600; font-size: 15px; }
         .book-author { color: var(--text-muted); }
-        .book-crit { font-size: 12px; padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 20px; text-align: center; color: var(--text-muted); }
-        .book-genre { font-size: 12px; padding: 6px 12px; background: rgba(255,109,0,0.1); color: var(--accent-orange); border-radius: 20px; text-align: center; text-transform: capitalize;}
+        .book-crit { font-size: 12px; padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; text-align: center; color: var(--text-muted); }
+        .book-genre { font-size: 12px; padding: 6px 12px; background: rgba(255, 109, 0, 0.1); color: var(--accent-orange); border-radius: 20px; text-align: center; text-transform: capitalize;}
+
         .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; gap: 10px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal-content { background: var(--bg-panel); padding: 25px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; }
-        .modal-content h3 { margin-top: 0; color: var(--accent-orange); }
+        .modal-content h3 { margin-top: 0; color: var(--accent-orange); margin-bottom: 15px; }
         .modal-content p { color: var(--text-main); font-size: 14px; line-height: 1.5; text-align: left; margin-bottom: 20px;}
         .modal-close { background: var(--bg-card); border: 1px solid var(--border-color); color: white; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
         .modal-close:hover { background: var(--bg-hover); }
+
         .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
         .modal-btn-row button { flex: 1; }
+
+        /* Kontejner pro QR - qrcode.js tam hodí <img> tag */
+        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; }
+        #qrCodeContainer img { width: 100%; max-width: 200px; height: auto; }
+        
         .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; }
 
         @media (max-width: 900px) {
             body { padding-bottom: 60px; }
             .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; }
-            .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; }
+            .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
             .mobile-nav-btn.active { color: var(--accent-orange); }
             .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-card); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 3px; border: 1px solid var(--border-color); }
             .mobile-nav-btn.active span.badge { border-color: var(--accent-orange); color: var(--text-main); }
@@ -108,6 +143,8 @@
             .book-crit { grid-area: crit; justify-self: start; margin-top: 8px; padding: 4px 10px; font-size: 11px; }
             .book-genre { grid-area: genre; justify-self: end; margin-top: 8px; padding: 4px 10px; font-size: 11px; }
             .status-box { padding: 15px; margin-bottom: 15px; }
+            .status-total { font-size: 24px; }
+            .logo { font-size: 18px; margin-bottom: 15px; }
         }
     </style>
 </head>
@@ -115,9 +152,18 @@
 
     <div id="printArea" class="print-only"></div>
 
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal-content">
+            <h3 id="alertTitle">Upozornění</h3>
+            <p id="alertMessage" style="text-align: center; margin-bottom: 20px;"></p>
+            <button class="modal-close" onclick="closeAlert()">Rozumím</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="installModal">
         <div class="modal-content">
-            <h3>Zařízení blokuje rychlou instalaci</h3>
+            <h3>Nemáte vyvolat nativní instalaci</h3>
+            <p>Zabezpečení prohlížeče zablokovalo automatické okno. Přidej si aplikaci ručně:</p>
             <p><strong>📱 iPhone:</strong><br>Klikni dole na <strong>ikonu sdílení</strong> a vyber <strong>Přidat na plochu</strong>.</p>
             <p><strong>💻 Počítač / Android:</strong><br>V menu prohlížeče (⋮) zvol "Instalovat aplikaci" nebo "Přidat na domovskou obrazovku".</p>
             <button class="modal-close" onclick="closeModals()">Rozumím</button>
@@ -127,7 +173,8 @@
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <h3>Tvůj seznam (QR kód)</h3>
-            <canvas id="qrImage" width="200" height="200" style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;"></canvas>
+            <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na GitHubu.</p>
+            <div id="qrCodeContainer"></div>
             <input type="text" id="qrLink" class="share-link-input" readonly onclick="this.select()">
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
@@ -157,7 +204,7 @@
                 <input type="text" id="studentName" placeholder="Jméno (např. Jan Novák)">
                 <input type="text" id="studentClass" placeholder="Třída (např. 4.A)">
                 <input type="text" id="schoolYear" placeholder="Školní rok (např. 2025/2026)">
-                <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje se ukládají pouze v tvém zařízení.</div>
+                <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje se ukládají pouze v tvém prohlížeči.</div>
             </div>
         </div>
         <div class="status-box">
@@ -189,9 +236,19 @@
     </div>
 
     <script>
+        // --- FUNKCE PRO VLASTNÍ VYSKAKOVACÍ UPOZORNĚNÍ (NAHRAZUJE ALERT) ---
+        function showAlert(message, title = "Upozornění") {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+        function closeAlert() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Info:', err));
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Info: Zanedbatelné v offline'));
             });
         }
 
@@ -440,20 +497,13 @@
             document.getElementById('studentClass').addEventListener('input', saveInfo);
             document.getElementById('schoolYear').addEventListener('input', saveInfo);
 
-            // Oprava ukládání dat a bezpečného načtení po předchozí chybě
             try {
                 const savedBooks = localStorage.getItem('selectedBooks');
                 if (savedBooks) {
                     const parsed = JSON.parse(savedBooks);
-                    if (Array.isArray(parsed)) {
-                        selectedIds = parsed;
-                    } else {
-                        localStorage.removeItem('selectedBooks');
-                    }
+                    if (Array.isArray(parsed)) selectedIds = parsed;
                 }
-            } catch(e) {
-                localStorage.removeItem('selectedBooks');
-            }
+            } catch(e) { localStorage.removeItem('selectedBooks'); }
 
             const urlParams = new URLSearchParams(window.location.search);
             const booksParam = urlParams.get('books');
@@ -461,7 +511,7 @@
                 const ids = booksParam.split(',').map(Number);
                 selectedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
                 window.history.replaceState({}, document.title, window.location.pathname);
-                if(selectedIds.length > 0 && window.innerWidth <= 900) { switchMobileTab('list'); }
+                if(selectedIds.length > 0 && window.innerWidth <= 900) switchMobileTab('list');
             }
             updateApp();
         };
@@ -489,6 +539,7 @@
             document.getElementById('installModal').style.display = 'none';
             document.getElementById('qrModal').style.display = 'none';
             document.getElementById('clearModal').style.display = 'none';
+            document.getElementById('alertModal').style.display = 'none';
         }
 
         function renderBooks() {
@@ -527,7 +578,7 @@
                 selectedIds = selectedIds.filter(bookId => bookId !== id);
             } else {
                 if (selectedIds.length >= 20) {
-                    alert("Už máš vybráno 20 děl! Pro přidání jiného musíš nějaké smazat.");
+                    showAlert("Už máš vybráno 20 děl! Pro přidání jiného musíš nějaké smazat.");
                     return;
                 }
 
@@ -537,24 +588,24 @@
                 if (sameAuthorBooks.length > 0) {
                     if (bookToAdd.author === "Čapek, K.") {
                         if (sameAuthorBooks.length >= 2) {
-                            alert("Od Karla Čapka můžeš mít maximálně 2 díla (1 prózu a 1 drama).");
+                            showAlert("Od Karla Čapka můžeš mít maximálně 2 díla (1 prózu a 1 drama).");
                             return;
                         }
                         if (sameAuthorBooks[0].genre === bookToAdd.genre) {
-                            alert(`Od Karla Čapka už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si od něj přidat ještě dílo, ale musí to být jiný literární druh (próza/drama).`);
+                            showAlert(`Od Karla Čapka už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (próza/drama).`);
                             return;
                         }
                     } else if (bookToAdd.author === "Shakespeare, W.") {
                         if (sameAuthorBooks.length >= 2) {
-                            alert("Od Williama Shakespeara můžeš mít maximálně 2 díla (1 poezii a 1 drama).");
+                            showAlert("Od Williama Shakespeara můžeš mít maximálně 2 díla (1 poezii a 1 drama).");
                             return;
                         }
                         if (sameAuthorBooks[0].genre === bookToAdd.genre) {
-                            alert(`Od W. Shakespeara už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si od něj přidat ještě dílo, ale musí to být jiný literární druh (poezie/drama).`);
+                            showAlert(`Od W. Shakespeara už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (poezie/drama).`);
                             return;
                         }
                     } else {
-                        alert(`Od autora ${bookToAdd.author} už máš vybrané jedno dílo. Podle pravidel smíš mít od jednoho autora maximálně 1 knihu (s výjimkou K. Čapka a W. Shakespeara).`);
+                        showAlert(`Od autora ${bookToAdd.author} už máš vybrané dílo. Podle pravidel smíš mít od jednoho autora max. 1 knihu (s výjimkou K. Čapka a W. Shakespeara).`);
                         return;
                     }
                 }
@@ -569,7 +620,7 @@
 
         function checkMaturitaRules() {
             if (selectedIds.length !== 20) {
-                alert("❌ Musíš mít vybráno přesně 20 knih!");
+                showAlert("Musíš mít vybráno přesně 20 knih!", "Nesplněno pravidlo");
                 return false;
             }
 
@@ -582,18 +633,19 @@
                 genreCounts[book.genre]++;
             });
 
-            if (counts[1] < 2) { alert("❌ Nesplňuješ pravidlo: Do konce 18. století musíš mít min. 2 díla."); return false; }
-            if (counts[2] < 3) { alert("❌ Nesplňuješ pravidlo: Pro 19. století musíš mít min. 3 díla."); return false; }
-            if (counts[3] < 4) { alert("❌ Nesplňuješ pravidlo: Pro Světovou literaturu 20./21. st. musíš mít min. 4 díla."); return false; }
-            if (counts[4] < 5) { alert("❌ Nesplňuješ pravidlo: Pro Českou literaturu 20./21. st. musíš mít min. 5 děl."); return false; }
+            if (counts[1] < 2) { showAlert("Do konce 18. století musíš mít min. 2 díla.", "Chybí období"); return false; }
+            if (counts[2] < 3) { showAlert("Pro 19. století musíš mít min. 3 díla.", "Chybí období"); return false; }
+            if (counts[3] < 4) { showAlert("Pro Světovou literaturu 20./21. st. musíš mít min. 4 díla.", "Chybí období"); return false; }
+            if (counts[4] < 5) { showAlert("Pro Českou literaturu 20./21. st. musíš mít min. 5 děl.", "Chybí období"); return false; }
 
-            if (genreCounts['próza'] < 2) { alert("❌ Nesplňuješ pravidlo: V seznamu musí být minimálně 2 prózy."); return false; }
-            if (genreCounts['poezie'] < 2) { alert("❌ Nesplňuješ pravidlo: V seznamu musí být minimálně 2 poezie."); return false; }
-            if (genreCounts['drama'] < 2) { alert("❌ Nesplňuješ pravidlo: V seznamu musí být minimálně 2 dramata."); return false; }
+            if (genreCounts['próza'] < 2) { showAlert("V seznamu musí být minimálně 2 prózy.", "Chybí literární druh"); return false; }
+            if (genreCounts['poezie'] < 2) { showAlert("V seznamu musí být minimálně 2 poezie.", "Chybí literární druh"); return false; }
+            if (genreCounts['drama'] < 2) { showAlert("V seznamu musí být minimálně 2 dramata.", "Chybí literární druh"); return false; }
 
             return true;
         }
 
+        // --- PŘEPSANÉ LOKÁLNÍ GENEROVÁNÍ QR KÓDU BEZ CANVASU ---
         function generateQR() {
             if (!checkMaturitaRules()) return;
             
@@ -602,20 +654,17 @@
 
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
             document.getElementById('qrLink').value = shareUrl;
-            document.getElementById('qrModal').style.display = 'flex';
 
-            const qrContainer = document.getElementById('qrImage');
-            const ctx = qrContainer.getContext('2d');
-            ctx.clearRect(0, 0, qrContainer.width, qrContainer.height);
+            try {
+                const qr = qrcode(0, 'L');
+                qr.addData(shareUrl);
+                qr.make();
+                document.getElementById('qrCodeContainer').innerHTML = qr.createImgTag(5, 0);
+            } catch(e) {
+                document.getElementById('qrCodeContainer').innerHTML = "<span style='color:red;'>Generování kódu se nezdařilo.</span>";
+            }
             
-            new QRious({
-                element: qrContainer,
-                value: shareUrl,
-                size: 200,
-                background: 'white',
-                foreground: 'black',
-                level: 'L'
-            });
+            document.getElementById('qrModal').style.display = 'flex';
         }
 
         function generatePDF() {
@@ -625,14 +674,19 @@
             const sClass = document.getElementById('studentClass').value;
             const sYear = document.getElementById('schoolYear').value;
 
-            // Vygenerované SVG logo odpovídající tvému obrázku (G a text)
-            const logoSvg = `data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20120%22%3E%3Ctext%20x%3D%2250%22%20y%3D%2220%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20text-anchor%3D%22middle%22%20fill%3D%22%23333%22%3EGymn%C3%A1zium%3C%2Ftext%3E%3Cpath%20d%3D%22M%2070%2040%20C%2030%2030%2C%2020%2070%2C%2030%2090%20C%2040%20110%2C%2070%20100%2C%2070%2080%20L%2050%2080%22%20fill%3D%22none%22%20stroke%3D%22%23333%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M%2045%2095%20L%2045%2050%20L%2055%2050%20L%2055%2095%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23333%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M%2040%2050%20L%2050%2035%20L%2060%2050%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23333%22%20stroke-width%3D%222%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%22115%22%20font-family%3D%22sans-serif%22%20font-size%3D%2212%22%20text-anchor%3D%22middle%22%20fill%3D%22%23333%22%3EP%C5%99%C3%ADbram%3C%2Ftext%3E%3C%2Fsvg%3E`;
-
+            // HTML šablona věrně kopírující obrázek - vyřešeno zarovnání textů a logo v HTML
             let printHTML = `
                 <div style="font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: black; background: white; padding: 20px;">
-                    <div style="position: relative; text-align: center; margin-bottom: 20px; height: 80px;">
-                        <img src="${logoSvg}" style="position: absolute; left: 0; top: 0; height: 80px; width: auto;" alt="Logo">
-                        <div style="font-size: 10pt; color: #444; letter-spacing: 1px; padding-top: 30px;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
+                    
+                    <div style="position: relative; height: 80px; margin-bottom: 20px;">
+                        <div style="position: absolute; left: 0; top: 0; width: 80px; text-align: center; color: #555;">
+                            <div style="font-size: 10px; font-family: sans-serif;">Gymnázium</div>
+                            <div style="font-size: 55px; font-family: 'Times New Roman', serif; line-height: 0.9; margin-top: -2px;">G</div>
+                            <div style="font-size: 10px; font-family: sans-serif;">Příbram</div>
+                        </div>
+                        <div style="text-align: center; width: 100%; padding-top: 30px; font-size: 10pt; color: #555; letter-spacing: 1px;">
+                            GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402
+                        </div>
                     </div>
                     
                     <hr style="border: none; border-top: 1px solid #aaa; margin-bottom: 30px;">
@@ -641,7 +695,7 @@
                         <h2 style="font-size: 13pt; font-weight: normal; margin: 5px 0; line-height: 1.4;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</h2>
                     </div>
                     
-                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 15px;">
+                    <table style="width: 100%; font-size: 11pt; margin-bottom: 15px; border-collapse: collapse;">
                         <tr>
                             <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno:</td>
                             <td style="border-bottom: 1px solid black; text-align: left; padding: 0 5px;">${sName || ''}</td>
