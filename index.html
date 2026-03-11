@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
     <title>Selekce Četby</title>
     <style>
@@ -150,7 +150,7 @@
     <div class="modal-overlay" id="installModal">
         <div class="modal-content">
             <h3>Nemáte vyvolat nativní instalaci</h3>
-            <p>Zabezpečení prohlížeče (nebo iOS) zablokovalo automatické okno. Přidej si aplikaci ručně:</p>
+            <p>Zabezpečení prohlížeče zablokovalo automatické okno. Přidej si aplikaci ručně:</p>
             <p><strong>📱 iPhone:</strong><br>Klikni dole na <strong>ikonu sdílení</strong> a vyber <strong>Přidat na plochu</strong>.</p>
             <p><strong>💻 Počítač / Android:</strong><br>V menu prohlížeče (⋮) zvol "Instalovat aplikaci" nebo "Přidat na domovskou obrazovku".</p>
             <button class="modal-close" onclick="closeModals()">Rozumím</button>
@@ -191,7 +191,7 @@
                 <input type="text" id="studentName" placeholder="Jméno (např. Jan Novák)">
                 <input type="text" id="studentClass" placeholder="Třída (např. 4.A)">
                 <input type="text" id="schoolYear" placeholder="Školní rok (např. 2025/2026)">
-                <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje se ukládají pouze v tvém zařízení!</div>
+                <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje se ukládají pouze do paměti prohlížeče.</div>
             </div>
         </div>
         <div class="status-box">
@@ -241,6 +241,7 @@
             }
         }
 
+        // === KOMPLETNÍ SEZNAM 212 DĚL VČETNĚ LITERÁRNÍCH DRUHŮ ===
         const books = [
             { id: 1, author: "Alighieri Dante", title: "Božská komedie", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
             { id: 2, author: "Neznámý", title: "Bible", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
@@ -460,14 +461,11 @@
         let activeCritFilter = null;
         let activeGenreFilter = null;
 
-        // --- LOGIKA LOKÁLNÍHO ÚLOŽIŠTĚ (LOCAL STORAGE) ---
         window.onload = () => {
-            // 1. Načtení osobních údajů
             document.getElementById('studentName').value = localStorage.getItem('studentName') || '';
             document.getElementById('studentClass').value = localStorage.getItem('studentClass') || '';
             document.getElementById('schoolYear').value = localStorage.getItem('schoolYear') || '';
 
-            // Listenery pro průběžné ukládání údajů
             const saveInfo = () => {
                 localStorage.setItem('studentName', document.getElementById('studentName').value);
                 localStorage.setItem('studentClass', document.getElementById('studentClass').value);
@@ -477,22 +475,17 @@
             document.getElementById('studentClass').addEventListener('input', saveInfo);
             document.getElementById('schoolYear').addEventListener('input', saveInfo);
 
-            // 2. Načtení knih z lokálního úložiště
             const savedBooks = localStorage.getItem('selectedBooks');
             if (savedBooks) {
                 try { selectedIds = JSON.parse(savedBooks); } catch(e) {}
             }
 
-            // 3. Načtení knih z URL (QR kód) - má přednost před lokálními daty
-            const urlParams = newSearchParams(window.location.search);
+            const urlParams = new URLSearchParams(window.location.search);
             const booksParam = urlParams.get('books');
             if (booksParam) {
                 const ids = booksParam.split(',').map(Number);
                 selectedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
-                
-                // Vyčištění URL, aby to při dalším načtení neotravovalo
                 window.history.replaceState({}, document.title, window.location.pathname);
-                
                 if(selectedIds.length > 0 && window.innerWidth <= 900) { switchMobileTab('list'); }
             }
             updateApp();
@@ -599,7 +592,6 @@
         function showClearModal() { if(selectedIds.length > 0) { document.getElementById('clearModal').style.display = 'flex'; } }
         function confirmClearSelection() { selectedIds = []; closeModals(); updateApp(); }
 
-        // --- KONTROLA MATURITNÍCH PRAVIDEL PRO PDF a QR ---
         function checkMaturitaRules() {
             if (selectedIds.length !== 20) {
                 alert("❌ Musíš mít vybráno přesně 20 knih!");
@@ -635,6 +627,7 @@
 
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
             document.getElementById('qrLink').value = shareUrl;
+
             document.getElementById('qrModal').style.display = 'flex';
 
             const qrContainer = document.getElementById('qrImage');
@@ -658,7 +651,6 @@
             const sClass = document.getElementById('studentClass').value;
             const sYear = document.getElementById('schoolYear').value;
 
-            // Logo vloženo jako Base64 SVG simulující formát a "G" na obrázku od uživatele
             const logoSvg = `data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20120%22%3E%3Ctext%20x%3D%2250%22%20y%3D%2215%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2212%22%20text-anchor%3D%22middle%22%20fill%3D%22%23444%22%3EGymn%C3%A1zium%3C%2Ftext%3E%3Ctext%20x%3D%2250%22%20y%3D%2285%22%20font-family%3D%22Georgia%2C%20serif%22%20font-size%3D%2280%22%20text-anchor%3D%22middle%22%20fill%3D%22%23444%22%3EG%3C%2Ftext%3E%3Cpath%20d%3D%22M%2050%2030%20L%2035%2090%20L%2045%2090%20L%2050%2070%20L%2055%2090%20L%2065%2090%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23444%22%20stroke-width%3D%222%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%22110%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2212%22%20text-anchor%3D%22middle%22%20fill%3D%22%23444%22%3EP%C5%99%C3%ADbram%3C%2Ftext%3E%3C%2Fsvg%3E`;
 
             let printHTML = `
@@ -739,7 +731,6 @@
         }
 
         function updateApp() {
-            // Uložení aktuálních knih do paměti prohlížeče
             localStorage.setItem('selectedBooks', JSON.stringify(selectedIds));
 
             renderBooks();
@@ -816,5 +807,3 @@
     </script>
 </body>
 </html>
-
-
