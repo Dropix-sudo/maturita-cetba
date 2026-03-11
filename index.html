@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
     <title>Selekce Četby</title>
     <style>
@@ -104,7 +104,6 @@
 
         .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; gap: 10px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
-        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal-content { background: var(--bg-panel); padding: 25px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; }
         .modal-content h3 { margin-top: 0; color: var(--accent-orange); margin-bottom: 15px; }
@@ -115,10 +114,6 @@
         .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
         .modal-btn-row button { flex: 1; }
 
-        /* Kontejner pro QR - qrcode.js tam hodí <img> tag */
-        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; }
-        #qrCodeContainer img { width: 100%; max-width: 200px; height: auto; }
-        
         .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; }
 
         @media (max-width: 900px) {
@@ -162,8 +157,8 @@
 
     <div class="modal-overlay" id="installModal">
         <div class="modal-content">
-            <h3>Nemáte vyvolat nativní instalaci</h3>
-            <p>Zabezpečení prohlížeče zablokovalo automatické okno. Přidej si aplikaci ručně:</p>
+            <h3>Zařízení blokuje rychlou instalaci</h3>
+            <p>Zabezpečení prohlížeče blokuje automatické okno. Přidej si aplikaci ručně:</p>
             <p><strong>📱 iPhone:</strong><br>Klikni dole na <strong>ikonu sdílení</strong> a vyber <strong>Přidat na plochu</strong>.</p>
             <p><strong>💻 Počítač / Android:</strong><br>V menu prohlížeče (⋮) zvol "Instalovat aplikaci" nebo "Přidat na domovskou obrazovku".</p>
             <button class="modal-close" onclick="closeModals()">Rozumím</button>
@@ -174,7 +169,9 @@
         <div class="modal-content">
             <h3>Tvůj seznam (QR kód)</h3>
             <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na GitHubu.</p>
-            <div id="qrCodeContainer"></div>
+            
+            <img id="qrImage" src="" alt="QR Kód" style="display:block; margin: 0 auto 15px auto; width: 200px; height: 200px; border-radius: 8px; background: white; padding: 10px;">
+            
             <input type="text" id="qrLink" class="share-link-input" readonly onclick="this.select()">
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
@@ -236,25 +233,28 @@
     </div>
 
     <script>
-        // --- FUNKCE PRO VLASTNÍ VYSKAKOVACÍ UPOZORNĚNÍ (NAHRAZUJE ALERT) ---
+        // --- FUNKCE PRO VYSKAKOVACÍ OKNA (MODÁLY) ---
         function showAlert(message, title = "Upozornění") {
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
             document.getElementById('alertModal').style.display = 'flex';
         }
-        function closeAlert() {
+        function closeAlert() { document.getElementById('alertModal').style.display = 'none'; }
+        function closeModals() {
+            document.getElementById('installModal').style.display = 'none';
+            document.getElementById('qrModal').style.display = 'none';
+            document.getElementById('clearModal').style.display = 'none';
             document.getElementById('alertModal').style.display = 'none';
         }
 
+        // --- SERVICE WORKER A INSTALACE ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Info: Zanedbatelné v offline'));
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Info: Nepřipojeno.'));
             });
         }
-
         let deferredPrompt = null;
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
-
         function triggerInstall() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -264,6 +264,7 @@
             }
         }
 
+        // === KOMPLETNÍ SEZNAM 212 DĚL VČETNĚ LITERÁRNÍCH DRUHŮ ===
         const books = [
             { id: 1, author: "Alighieri Dante", title: "Božská komedie", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
             { id: 2, author: "Neznámý", title: "Bible", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
@@ -501,9 +502,15 @@
                 const savedBooks = localStorage.getItem('selectedBooks');
                 if (savedBooks) {
                     const parsed = JSON.parse(savedBooks);
-                    if (Array.isArray(parsed)) selectedIds = parsed;
+                    if (Array.isArray(parsed)) {
+                        selectedIds = parsed;
+                    } else {
+                        localStorage.removeItem('selectedBooks');
+                    }
                 }
-            } catch(e) { localStorage.removeItem('selectedBooks'); }
+            } catch(e) {
+                localStorage.removeItem('selectedBooks');
+            }
 
             const urlParams = new URLSearchParams(window.location.search);
             const booksParam = urlParams.get('books');
@@ -511,7 +518,7 @@
                 const ids = booksParam.split(',').map(Number);
                 selectedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
                 window.history.replaceState({}, document.title, window.location.pathname);
-                if(selectedIds.length > 0 && window.innerWidth <= 900) switchMobileTab('list');
+                if(selectedIds.length > 0 && window.innerWidth <= 900) { switchMobileTab('list'); }
             }
             updateApp();
         };
@@ -533,13 +540,6 @@
             const arrow = document.getElementById('infoArrow');
             content.classList.toggle('open');
             arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
-        }
-
-        function closeModals() {
-            document.getElementById('installModal').style.display = 'none';
-            document.getElementById('qrModal').style.display = 'none';
-            document.getElementById('clearModal').style.display = 'none';
-            document.getElementById('alertModal').style.display = 'none';
         }
 
         function renderBooks() {
@@ -623,7 +623,6 @@
                 showAlert("Musíš mít vybráno přesně 20 knih!", "Nesplněno pravidlo");
                 return false;
             }
-
             let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
             let genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
 
@@ -645,7 +644,6 @@
             return true;
         }
 
-        // --- PŘEPSANÉ LOKÁLNÍ GENEROVÁNÍ QR KÓDU BEZ CANVASU ---
         function generateQR() {
             if (!checkMaturitaRules()) return;
             
@@ -655,15 +653,16 @@
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
             document.getElementById('qrLink').value = shareUrl;
 
+            // Spolehlivý QR generátor vykreslený jako dataURI IMG do divu
             try {
                 const qr = qrcode(0, 'L');
                 qr.addData(shareUrl);
                 qr.make();
-                document.getElementById('qrCodeContainer').innerHTML = qr.createImgTag(5, 0);
+                document.getElementById('qrImage').src = qr.createDataURL(5, 0);
             } catch(e) {
-                document.getElementById('qrCodeContainer').innerHTML = "<span style='color:red;'>Generování kódu se nezdařilo.</span>";
+                console.error("QR Error", e);
             }
-            
+
             document.getElementById('qrModal').style.display = 'flex';
         }
 
@@ -674,20 +673,22 @@
             const sClass = document.getElementById('studentClass').value;
             const sYear = document.getElementById('schoolYear').value;
 
-            // HTML šablona věrně kopírující obrázek - vyřešeno zarovnání textů a logo v HTML
+            // Opravené logo pomocí klasické HTML tabulky místo SVG - tohle html2pdf nepřeskočí
             let printHTML = `
                 <div style="font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: black; background: white; padding: 20px;">
                     
-                    <div style="position: relative; height: 80px; margin-bottom: 20px;">
-                        <div style="position: absolute; left: 0; top: 0; width: 80px; text-align: center; color: #555;">
-                            <div style="font-size: 10px; font-family: sans-serif;">Gymnázium</div>
-                            <div style="font-size: 55px; font-family: 'Times New Roman', serif; line-height: 0.9; margin-top: -2px;">G</div>
-                            <div style="font-size: 10px; font-family: sans-serif;">Příbram</div>
-                        </div>
-                        <div style="text-align: center; width: 100%; padding-top: 30px; font-size: 10pt; color: #555; letter-spacing: 1px;">
-                            GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402
-                        </div>
-                    </div>
+                    <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
+                        <tr>
+                            <td style="width: 15%; text-align: center; vertical-align: middle; color: #555;">
+                                <div style="font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; margin-bottom: -5px;">Gymnázium</div>
+                                <div style="font-family: 'Times New Roman', Times, serif; font-size: 65px; line-height: 1; font-weight: normal; margin: 0;">G</div>
+                                <div style="font-family: Arial, sans-serif; font-size: 12px; margin-top: -8px;">Příbram</div>
+                            </td>
+                            <td style="width: 85%; text-align: center; vertical-align: middle; font-size: 10pt; color: #444; letter-spacing: 1px;">
+                                GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402
+                            </td>
+                        </tr>
+                    </table>
                     
                     <hr style="border: none; border-top: 1px solid #aaa; margin-bottom: 30px;">
                     <div style="text-align: center; margin-bottom: 40px;">
@@ -695,7 +696,7 @@
                         <h2 style="font-size: 13pt; font-weight: normal; margin: 5px 0; line-height: 1.4;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</h2>
                     </div>
                     
-                    <table style="width: 100%; font-size: 11pt; margin-bottom: 15px; border-collapse: collapse;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 15px;">
                         <tr>
                             <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno:</td>
                             <td style="border-bottom: 1px solid black; text-align: left; padding: 0 5px;">${sName || ''}</td>
