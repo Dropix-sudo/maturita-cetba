@@ -8,33 +8,34 @@
     <meta name="theme-color" content="#ffffff">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%232563eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
     <title>Selekce Četby | Gymnázium Příbram</title>
     <style>
         :root {
-            --bg-main: #f5f5f5; 
+            /* Světlý, čistý "školní" design */
+            --bg-main: #f8fafc; 
             --bg-panel: #ffffff; 
             --bg-card: #ffffff; 
-            --bg-hover: #f0f0f0;
-            --text-main: #222222; 
-            --text-muted: #666666;
+            --bg-hover: #f1f5f9;
+            --text-main: #1e293b; 
+            --text-muted: #64748b;
             --accent-green: #16a34a; 
             --accent-red: #dc2626; 
-            --accent-yellow: #facc15; 
-            --accent-dark: #333333; 
-            --border-color: #dddddd; 
-            --radius: 8px; 
+            --accent-blue: #2563eb; /* Oficiální modrá */
+            --accent-dark: #0f172a;
+            --border-color: #e2e8f0; 
+            --radius: 10px; 
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cccccc; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #aaaaaa; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         body { margin: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; user-select: none; }
 
@@ -46,82 +47,82 @@
             .print-only { display: block !important; }
         }
 
-        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.03); scroll-behavior: smooth; }
+        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.02); scroll-behavior: smooth; }
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
         .mobile-nav { display: none; }
 
         .logo { display: flex; align-items: center; gap: 15px; font-size: 19px; font-weight: 800; margin-bottom: 28px; color: var(--accent-dark); line-height: 1.1; letter-spacing: 0.5px; }
         .logo img { width: 45px; height: auto; }
-        .logo span { color: var(--text-muted); font-weight: 400; font-size: 16px;}
+        .logo span { color: var(--accent-blue); font-weight: 400; font-size: 16px;}
 
         .personal-info-wrapper { margin-bottom: 24px; }
-        .btn-toggle-info { width: 100%; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px; border-radius: var(--radius); cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; transition: var(--transition); }
-        .btn-toggle-info:hover { background: var(--bg-hover); border-color: #bbbbbb; }
-        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: var(--bg-main); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border-color); }
+        .btn-toggle-info { width: 100%; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; transition: var(--transition); }
+        .btn-toggle-info:hover { background: var(--bg-hover); border-color: #cbd5e1; }
+        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: var(--bg-main); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); }
         .personal-info-content.open { display: flex; }
         .personal-info-content input { padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); outline: none; font-size: 13px; transition: var(--transition); }
-        .personal-info-content input:focus { border-color: var(--accent-dark); }
+        .personal-info-content input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
         .disclaimer-text { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 5px; padding-top: 10px; border-top: 1px dashed var(--border-color); line-height: 1.4; }
-        .disclaimer-text span { color: var(--accent-dark); font-weight: bold; }
+        .disclaimer-text span { color: var(--accent-blue); font-weight: bold; }
 
-        .status-box { background: var(--accent-dark); border: none; padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; color: white; }
-        .status-label { font-size: 12px; color: rgba(255,255,255,0.7); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-        .status-total { font-size: 28px; font-weight: 800; margin-top: 5px; color: var(--accent-yellow); }
+        .status-box { background: var(--accent-blue); border: none; padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25); color: white; }
+        .status-label { font-size: 12px; color: rgba(255,255,255,0.8); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .status-total { font-size: 28px; font-weight: 800; margin-top: 5px; }
 
         .section-header { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted); letter-spacing: 0.5px; }
 
         .criteria-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
-        .crit-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: var(--radius); color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+        .crit-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
         .crit-btn:hover { background: var(--bg-hover); }
-        .crit-btn.active-filter { border-color: var(--accent-dark); background: #f9f9f9; box-shadow: 0 0 0 1px var(--accent-dark); }
+        .crit-btn.active-filter { border-color: var(--accent-blue); background: #eff6ff; color: var(--accent-blue); box-shadow: 0 0 0 1px var(--accent-blue); }
         .crit-btn .count.met { color: var(--accent-green); font-weight: bold; }
         .crit-btn .count.unmet { color: var(--accent-red); }
 
         .selected-books { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .selected-item { background: var(--bg-panel); padding: 12px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 13px; }
+        .selected-item { background: var(--bg-panel); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .selected-item-info strong { display: block; margin-bottom: 2px; color: var(--accent-dark); }
         .selected-item-author { font-size: 11px; color: var(--text-muted); }
 
-        .btn-remove { background: #fef2f2; border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
+        .btn-remove { background: rgba(220, 38, 38, 0.1); border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
         .btn-remove:hover { background: var(--accent-red); color: white; }
 
         .action-btns { display: flex; flex-direction: column; gap: 10px; }
-        .btn-modern { width: 100%; padding: 14px; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-install { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); }
-        .btn-install:hover { background-color: #e5e5e5; }
-        .btn-pdf { background-color: var(--accent-yellow); color: black; box-shadow: 0 4px 10px rgba(250, 204, 21, 0.2); }
-        .btn-pdf:hover { background-color: #eab308; transform: translateY(-2px); }
-        .btn-share { background-color: var(--accent-dark); color: white; }
-        .btn-share:hover { background-color: #111111; transform: translateY(-2px); }
+        .btn-modern { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-install { background-color: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-install:hover { background-color: var(--bg-hover); }
+        .btn-pdf { background-color: var(--accent-dark); color: white; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2); }
+        .btn-pdf:hover { background-color: #1e293b; transform: translateY(-2px); }
+        .btn-share { background-color: var(--accent-blue); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+        .btn-share:hover { background-color: #1d4ed8; transform: translateY(-2px); }
         .btn-clear { background-color: transparent; color: var(--accent-red); border: 1px dashed rgba(220, 38, 38, 0.4); }
         .btn-clear:hover { background-color: rgba(220, 38, 38, 0.05); border-style: solid; }
 
         .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .search-bar input { width: 100%; padding: 16px 20px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius); font-size: 15px; box-sizing: border-box; outline: none; transition: var(--transition); }
-        .search-bar input:focus { border-color: var(--accent-dark); background: #ffffff; }
+        .search-bar input:focus { border-color: var(--accent-blue); background: #ffffff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
         .books-container { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-        .book-card { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px 20px; text-align: left; cursor: pointer; transition: var(--transition); font-size: 14px; gap: 10px;}
-        .book-card:hover { border-color: #aaaaaa; box-shadow: 0 4px 6px rgba(0,0,0,0.03); transform: translateY(-1px); }
-        .book-card.selected { background: #fafafa; border-color: var(--accent-dark); }
+        .book-card { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px 20px; text-align: left; cursor: pointer; transition: var(--transition); font-size: 14px; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);}
+        .book-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.04); transform: translateY(-1px); }
+        .book-card.selected { background: #f0fdf4; border-color: var(--accent-green); }
 
-        .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cccccc; display: flex; align-items: center; justify-content: center; background: white; transition: var(--transition); }
+        .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; background: white; transition: var(--transition); }
         .check-circle::after { content: '✓'; color: transparent; font-size: 13px; font-weight: bold; }
-        .book-card.selected .check-circle { background: var(--accent-yellow); border-color: var(--accent-yellow); }
-        .book-card.selected .check-circle::after { color: #000; }
+        .book-card.selected .check-circle { background: var(--accent-green); border-color: var(--accent-green); }
+        .book-card.selected .check-circle::after { color: white; }
 
-        .book-title { font-weight: 600; font-size: 15px; color: var(--text-main); }
+        .book-title { font-weight: 600; font-size: 15px; color: var(--accent-dark); }
         .book-author { color: var(--text-muted); }
-        .book-crit { font-size: 12px; padding: 6px 12px; background: var(--bg-main); border-radius: 20px; text-align: center; color: var(--text-muted); border: 1px solid var(--border-color); }
-        .book-genre { font-size: 12px; padding: 6px 12px; background: #f3f4f6; color: var(--text-muted); border-radius: 20px; text-align: center; text-transform: capitalize; border: 1px solid #e5e7eb; }
+        .book-crit { font-size: 12px; padding: 6px 12px; background: var(--bg-main); border-radius: 20px; text-align: center; color: var(--text-muted); font-weight: 500; border: 1px solid var(--border-color); }
+        .book-genre { font-size: 12px; padding: 6px 12px; background: #eff6ff; color: var(--accent-blue); border-radius: 20px; text-align: center; text-transform: capitalize; font-weight: 600; border: 1px solid rgba(37, 99, 235, 0.2); }
         
-        .book-card.selected .book-crit, .book-card.selected .book-genre { background: #ffffff; border-color: #dddddd; }
+        .book-card.selected .book-crit, .book-card.selected .book-genre { background: rgba(255,255,255,0.7); border-color: transparent; }
 
         .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; gap: 10px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(3px); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
         .modal-content { background: var(--bg-panel); padding: 30px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .modal-content h3 { margin-top: 0; color: var(--text-main); margin-bottom: 15px; font-size: 20px; }
+        .modal-content h3 { margin-top: 0; color: var(--accent-dark); margin-bottom: 15px; font-size: 20px; }
         .modal-content p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px;}
         .modal-close { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: var(--transition); }
         .modal-close:hover { background: #e2e8f0; }
@@ -130,28 +131,23 @@
         .modal-btn-row button { flex: 1; }
 
         #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; border: 1px solid var(--border-color); }
-        
-        .share-link-btn { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); cursor: pointer; font-weight: bold; transition: var(--transition); margin-bottom: 15px; font-size: 13px; }
-        .share-link-btn:hover { background: #e5e5e5; }
+        .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; outline: none; }
 
-        #sharedBooksList { text-align: left; overflow-y: auto; max-height: 250px; margin-bottom: 15px; font-size: 13px; border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; background: var(--bg-main); }
-        #sharedBooksList div { padding: 6px 0; border-bottom: 1px solid #eaeaea; }
-        #sharedBooksList div:last-child { border-bottom: none; }
-
+        /* TLAČÍTKO SCROLL NAHORU */
         #scrollTopBtn {
             position: fixed;
-            bottom: 85px;
+            bottom: 85px; /* Nad mobile nav barem */
             right: 20px;
             width: 48px;
             height: 48px;
-            background-color: var(--accent-dark);
-            color: var(--accent-yellow);
+            background-color: var(--accent-blue);
+            color: white;
             border: none;
             border-radius: 50%;
             font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
             z-index: 60;
             opacity: 0;
             pointer-events: none;
@@ -168,22 +164,16 @@
         }
 
         @media (max-width: 900px) {
-            body { padding-bottom: 0; } /* Změněno, padding řešíme v kontejnerech */
+            body { padding-bottom: 60px; }
             .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
             .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
-            .mobile-nav-btn.active { color: var(--accent-dark); }
-            .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); transition: var(--transition);}
-            .mobile-nav-btn.active span.badge { border-color: var(--accent-yellow); background: var(--accent-yellow); color: #000; }
-            
-            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 100px; display: none; }
-            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; }
-            
-            /* OPRAVA SCHOVÁVÁNÍ KNIH: Přidán padding na konec seznamů */
-            .books-container, .selected-books { padding-bottom: 100px !important; }
-            
+            .mobile-nav-btn.active { color: var(--accent-blue); }
+            .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); }
+            .mobile-nav-btn.active span.badge { border-color: var(--accent-blue); color: var(--accent-blue); background: #eff6ff; }
+            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 80px; display: none; }
+            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 60px; display: flex; }
             body.show-mylist .sidebar { display: flex; }
             body.show-mylist .main-content { display: none; }
-            
             .search-bar { padding: 15px; }
             .search-bar input { padding: 12px 15px; font-size: 15px; }
             .books-container { padding: 15px; gap: 8px; }
@@ -210,19 +200,7 @@
         <div class="modal-content">
             <h3 id="alertTitle">Upozornění</h3>
             <p id="alertMessage" style="text-align: center; margin-bottom: 20px;"></p>
-            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none;" onclick="closeAlert()">Rozumím</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="sharedListModal" style="z-index: 150;">
-        <div class="modal-content" style="display: flex; flex-direction: column;">
-            <h3>Sdílený seznam četby</h3>
-            <p>Někdo s tebou sdílel tento seznam děl. Chceš jím přepsat svůj aktuální výběr?</p>
-            <div id="sharedBooksList"></div>
-            <div class="modal-btn-row">
-                <button class="modal-close" onclick="closeSharedModal()">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-yellow); color: #000; border: none;" onclick="acceptSharedList()">Přijmout seznam</button>
-            </div>
+            <button class="modal-close" style="background: var(--accent-blue); color: white; border: none;" onclick="closeAlert()">Rozumím</button>
         </div>
     </div>
 
@@ -239,14 +217,13 @@
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <h3>Sdílet seznam</h3>
-            <p id="qrWarning" style="color: #dc2626; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na webu.</p>
+            <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na webu.</p>
             
             <div id="qrCodeContainer">
                 <canvas id="qrCanvas"></canvas>
             </div>
 
-            <button id="copyLinkBtn" class="share-link-btn" onclick="copyShareLink()">🔗 Zkopírovat odkaz</button>
-
+            <input type="text" id="qrLink" class="share-link-input" readonly onclick="this.select()">
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
     </div>
@@ -314,8 +291,7 @@
     </div>
 
     <script>
-        let windowShareUrl = "";
-
+        // Logika pro SCROLL NAHORU
         function scrollToTop() {
             document.getElementById('booksContainer').scrollTo({ top: 0, behavior: 'smooth' });
             document.getElementById('sidebarContainer').scrollTo({ top: 0, behavior: 'smooth' });
@@ -333,19 +309,19 @@
         document.getElementById('booksContainer').addEventListener('scroll', handleScroll);
         document.getElementById('sidebarContainer').addEventListener('scroll', handleScroll);
 
+
+        // Ostatní funkce
         function showAlert(message, title = "Upozornění") {
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
             document.getElementById('alertModal').style.display = 'flex';
         }
         function closeAlert() { document.getElementById('alertModal').style.display = 'none'; }
-        
         function closeModals() {
             document.getElementById('installModal').style.display = 'none';
             document.getElementById('qrModal').style.display = 'none';
             document.getElementById('clearModal').style.display = 'none';
             document.getElementById('alertModal').style.display = 'none';
-            closeSharedModal();
         }
 
         if ('serviceWorker' in navigator) {
@@ -580,10 +556,8 @@
         ];
 
         let selectedIds = [];
-        let pendingSharedIds = [];
         let activeCritFilter = null;
         let activeGenreFilter = null;
-        let windowShareUrl = "";
 
         window.onload = () => {
             document.getElementById('studentName').value = localStorage.getItem('studentName') || '';
@@ -618,39 +592,14 @@
                 const booksParam = urlParams.get('books');
                 if (booksParam) {
                     const ids = booksParam.split(',').map(Number);
-                    pendingSharedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
-                    
-                    if (pendingSharedIds.length > 0) {
-                        showSharedListModal();
-                    }
+                    selectedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
                     window.history.replaceState({}, document.title, window.location.pathname);
+                    if(selectedIds.length > 0 && window.innerWidth <= 900) { switchMobileTab('list'); }
                 }
             } catch(e) { console.error(e); }
             
             updateApp();
         };
-
-        function showSharedListModal() {
-            const container = document.getElementById('sharedBooksList');
-            container.innerHTML = '';
-            pendingSharedIds.forEach((id, index) => {
-                const book = books.find(b => b.id === id);
-                container.innerHTML += `<div><strong>${index + 1}.</strong> ${book.author} - ${book.title}</div>`;
-            });
-            document.getElementById('sharedListModal').style.display = 'flex';
-        }
-
-        function closeSharedModal() {
-            document.getElementById('sharedListModal').style.display = 'none';
-            pendingSharedIds = [];
-        }
-
-        function acceptSharedList() {
-            selectedIds = [...pendingSharedIds];
-            closeSharedModal();
-            updateApp();
-            if(window.innerWidth <= 900) { switchMobileTab('list'); }
-        }
 
         function switchMobileTab(tab) {
             if(tab === 'list') {
@@ -779,31 +728,14 @@
             return true;
         }
 
-        function copyShareLink() {
-            if (windowShareUrl) {
-                navigator.clipboard.writeText(windowShareUrl).then(() => {
-                    const btn = document.getElementById('copyLinkBtn');
-                    const originalText = btn.innerText;
-                    btn.innerText = "✓ Odkaz zkopírován";
-                    btn.style.backgroundColor = "var(--accent-green)";
-                    btn.style.color = "white";
-                    setTimeout(() => {
-                        btn.innerText = "🔗 Zkopírovat odkaz";
-                        btn.style.backgroundColor = "var(--bg-hover)";
-                        btn.style.color = "var(--text-main)";
-                    }, 2000);
-                });
-            }
-        }
-
         function generateQR() {
             if (!checkMaturitaRules()) return;
             
             const currentUrl = window.location.href.split(/[?#]/)[0];
             const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
-            windowShareUrl = shareUrl;
 
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
+            document.getElementById('qrLink').value = shareUrl;
 
             document.getElementById('qrModal').style.display = 'flex';
 
@@ -926,14 +858,14 @@
             
             const totalCountEl = document.getElementById('totalCount');
             totalCountEl.innerText = `${selectedIds.length} / 20`;
-            totalCountEl.style.color = 'white';
+            totalCountEl.style.color = selectedIds.length === 20 ? 'white' : 'white';
             
             const mobileBadge = document.getElementById('mobileBadge');
             mobileBadge.innerText = `${selectedIds.length}/20`;
             if (selectedIds.length === 20) {
-                mobileBadge.style.borderColor = 'var(--accent-yellow)';
-                mobileBadge.style.color = '#000';
-                mobileBadge.style.background = 'var(--accent-yellow)';
+                mobileBadge.style.borderColor = 'var(--accent-blue)';
+                mobileBadge.style.color = 'var(--accent-blue)';
+                mobileBadge.style.background = '#eff6ff';
             } else {
                 mobileBadge.style.borderColor = '';
                 mobileBadge.style.color = '';
