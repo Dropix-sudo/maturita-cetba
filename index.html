@@ -168,16 +168,22 @@
         }
 
         @media (max-width: 900px) {
-            body { padding-bottom: 60px; }
+            body { padding-bottom: 0; } /* Změněno, padding řešíme v kontejnerech */
             .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
             .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
             .mobile-nav-btn.active { color: var(--accent-dark); }
             .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); transition: var(--transition);}
             .mobile-nav-btn.active span.badge { border-color: var(--accent-yellow); background: var(--accent-yellow); color: #000; }
-            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 80px; display: none; }
-            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 60px; display: flex; }
+            
+            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 100px; display: none; }
+            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; }
+            
+            /* OPRAVA SCHOVÁVÁNÍ KNIH: Přidán padding na konec seznamů */
+            .books-container, .selected-books { padding-bottom: 100px !important; }
+            
             body.show-mylist .sidebar { display: flex; }
             body.show-mylist .main-content { display: none; }
+            
             .search-bar { padding: 15px; }
             .search-bar input { padding: 12px 15px; font-size: 15px; }
             .books-container { padding: 15px; gap: 8px; }
@@ -577,6 +583,7 @@
         let pendingSharedIds = [];
         let activeCritFilter = null;
         let activeGenreFilter = null;
+        let windowShareUrl = "";
 
         window.onload = () => {
             document.getElementById('studentName').value = localStorage.getItem('studentName') || '';
@@ -616,7 +623,6 @@
                     if (pendingSharedIds.length > 0) {
                         showSharedListModal();
                     }
-                    // Vyčistíme URL od parametru, ať to nestraší
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             } catch(e) { console.error(e); }
@@ -795,8 +801,7 @@
             
             const currentUrl = window.location.href.split(/[?#]/)[0];
             const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
-            
-            windowShareUrl = shareUrl; // Uložit pro kopírování
+            windowShareUrl = shareUrl;
 
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
 
@@ -921,7 +926,7 @@
             
             const totalCountEl = document.getElementById('totalCount');
             totalCountEl.innerText = `${selectedIds.length} / 20`;
-            totalCountEl.style.color = selectedIds.length === 20 ? 'white' : 'white';
+            totalCountEl.style.color = 'white';
             
             const mobileBadge = document.getElementById('mobileBadge');
             mobileBadge.innerText = `${selectedIds.length}/20`;
