@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
     <title>Selekce Četby</title>
     <style>
@@ -38,7 +36,7 @@
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
         .mobile-nav { display: none; }
 
-        .logo { font-size: 22px; font-weight: 800; margin-bottom: 24px; letter-spacing: 1px; }
+        .logo { font-size: 22px; font-weight: 800; margin-bottom: 24px; }
         .logo span { color: var(--accent-orange); }
 
         .personal-info-wrapper { margin-bottom: 24px; }
@@ -52,10 +50,10 @@
         .disclaimer-text span { color: var(--accent-green); font-weight: bold; }
 
         .status-box { background: linear-gradient(145deg, #2a2a2a, #1f1f1f); border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .status-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .status-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
         .status-total { font-size: 28px; font-weight: 800; margin-top: 5px; }
 
-        .section-header { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted); letter-spacing: 0.5px; }
+        .section-header { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted); }
 
         .criteria-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
         .crit-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
@@ -104,18 +102,17 @@
 
         .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; gap: 10px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
-        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
         .modal-content { background: var(--bg-panel); padding: 25px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .modal-content h3 { margin-top: 0; color: var(--accent-orange); margin-bottom: 15px; }
-        .modal-content p { color: var(--text-main); font-size: 14px; line-height: 1.5; text-align: left; margin-bottom: 20px;}
+        .modal-content p { color: var(--text-main); font-size: 14px; line-height: 1.5; margin-bottom: 20px;}
         .modal-close { background: var(--bg-card); border: 1px solid var(--border-color); color: white; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: var(--transition); }
         .modal-close:hover { background: var(--bg-hover); }
+
         .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
         .modal-btn-row button { flex: 1; }
 
-        /* QR kód img */
-        #qrImage { display: block; margin: 0 auto 15px auto; width: 200px; height: 200px; border-radius: 8px; background: white; padding: 10px; }
+        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; }
         .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; }
 
         @media (max-width: 900px) {
@@ -172,7 +169,9 @@
             <h3>Tvůj seznam (QR kód)</h3>
             <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na GitHubu.</p>
             
-            <img id="qrImage" src="" alt="QR Kód">
+            <div style="background: white; padding: 15px; border-radius: 8px; display: inline-block;">
+                <canvas id="qrCanvas"></canvas>
+            </div>
 
             <input type="text" id="qrLink" class="share-link-input" readonly onclick="this.select()">
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
@@ -200,7 +199,7 @@
         <div class="personal-info-wrapper">
             <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Osobní údaje <span id="infoArrow">▼</span></button>
             <div class="personal-info-content" id="personalInfoContent">
-                <input type="text" id="studentName" placeholder="Jméno (např. Jan Novák)">
+                <input type="text" id="studentName" placeholder="Jméno a příjmení">
                 <input type="text" id="studentClass" placeholder="Třída (např. 4.A)">
                 <input type="text" id="schoolYear" placeholder="Školní rok (např. 2025/2026)">
                 <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje se ukládají pouze v tvém prohlížeči.</div>
@@ -235,14 +234,12 @@
     </div>
 
     <script>
-        // --- FUNKCE PRO VLASTNÍ NOTIFIKACE ---
         function showAlert(message, title = "Upozornění") {
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
             document.getElementById('alertModal').style.display = 'flex';
         }
         function closeAlert() { document.getElementById('alertModal').style.display = 'none'; }
-        
         function closeModals() {
             document.getElementById('installModal').style.display = 'none';
             document.getElementById('qrModal').style.display = 'none';
@@ -250,7 +247,6 @@
             document.getElementById('alertModal').style.display = 'none';
         }
 
-        // --- SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('./sw.js').catch(err => {});
@@ -267,7 +263,6 @@
             }
         }
 
-        // === KOMPLETNÍ SEZNAM 212 DĚL VČETNĚ LITERÁRNÍCH DRUHŮ ===
         const books = [
             { id: 1, author: "Alighieri Dante", title: "Božská komedie", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
             { id: 2, author: "Neznámý", title: "Bible", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
@@ -524,7 +519,7 @@
                     window.history.replaceState({}, document.title, window.location.pathname);
                     if(selectedIds.length > 0 && window.innerWidth <= 900) { switchMobileTab('list'); }
                 }
-            } catch(e) {}
+            } catch(e) { console.error(e); }
             
             updateApp();
         };
@@ -589,32 +584,37 @@
                 }
 
                 const bookToAdd = books.find(b => b.id === id);
-                const sameAuthorBooks = selectedIds.map(sid => books.find(b => b.id === sid)).filter(b => b.author === bookToAdd.author);
+                
+                // Ignorujeme omezení pro Neznámého autora
+                if (bookToAdd.author !== "Neznámý") {
+                    const sameAuthorBooks = selectedIds.map(sid => books.find(b => b.id === sid)).filter(b => b.author === bookToAdd.author);
 
-                if (sameAuthorBooks.length > 0) {
-                    if (bookToAdd.author === "Čapek, K.") {
-                        if (sameAuthorBooks.length >= 2) {
-                            showAlert("Od Karla Čapka můžeš mít maximálně 2 díla (1 prózu a 1 drama).");
+                    if (sameAuthorBooks.length > 0) {
+                        if (bookToAdd.author === "Čapek, K.") {
+                            if (sameAuthorBooks.length >= 2) {
+                                showAlert("Od Karla Čapka můžeš mít maximálně 2 díla (1 prózu a 1 drama).");
+                                return;
+                            }
+                            if (sameAuthorBooks[0].genre === bookToAdd.genre) {
+                                showAlert(`Od Karla Čapka už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (próza/drama).`);
+                                return;
+                            }
+                        } else if (bookToAdd.author === "Shakespeare, W.") {
+                            if (sameAuthorBooks.length >= 2) {
+                                showAlert("Od Williama Shakespeara můžeš mít maximálně 2 díla (1 poezii a 1 drama).");
+                                return;
+                            }
+                            if (sameAuthorBooks[0].genre === bookToAdd.genre) {
+                                showAlert(`Od W. Shakespeara už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (poezie/drama).`);
+                                return;
+                            }
+                        } else {
+                            showAlert(`Od autora ${bookToAdd.author} už máš vybrané dílo. Podle pravidel smíš mít od jednoho autora max. 1 knihu (s výjimkou K. Čapka a W. Shakespeara).`);
                             return;
                         }
-                        if (sameAuthorBooks[0].genre === bookToAdd.genre) {
-                            showAlert(`Od Karla Čapka už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (próza/drama).`);
-                            return;
-                        }
-                    } else if (bookToAdd.author === "Shakespeare, W.") {
-                        if (sameAuthorBooks.length >= 2) {
-                            showAlert("Od Williama Shakespeara můžeš mít maximálně 2 díla (1 poezii a 1 drama).");
-                            return;
-                        }
-                        if (sameAuthorBooks[0].genre === bookToAdd.genre) {
-                            showAlert(`Od W. Shakespeara už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (poezie/drama).`);
-                            return;
-                        }
-                    } else {
-                        showAlert(`Od autora ${bookToAdd.author} už máš vybrané dílo. Podle pravidel smíš mít od jednoho autora max. 1 knihu (s výjimkou K. Čapka a W. Shakespeara).`);
-                        return;
                     }
                 }
+                
                 selectedIds.push(id);
             }
             updateApp();
@@ -651,7 +651,6 @@
             return true;
         }
 
-        // --- SPRAVENÝ QR KÓD PŘES QRIOUS (BEZPEČNĚ) ---
         function generateQR() {
             if (!checkMaturitaRules()) return;
             
@@ -661,27 +660,27 @@
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
             document.getElementById('qrLink').value = shareUrl;
 
-            // Zobrazení modálu PRVNÍ
+            // Ukaž modál hned
             document.getElementById('qrModal').style.display = 'flex';
 
-            // Generování a vložení data URL do obrázku
+            // Zpožděný render QRious přímo na Canvas prvek
             setTimeout(() => {
                 try {
+                    const canvas = document.getElementById('qrCanvas');
                     const qr = new QRious({
+                        element: canvas,
                         value: shareUrl,
-                        size: 250,
+                        size: 200,
                         background: 'white',
                         foreground: 'black',
                         level: 'L'
                     });
-                    document.getElementById('qrImage').src = qr.toDataURL();
                 } catch(e) {
-                    console.error("QR rendering failed", e);
+                    console.error("QR Error", e);
                 }
-            }, 50);
+            }, 100);
         }
 
-        // --- BÍLÉ PDF S KRESLENÝM LOGEM ---
         function generatePDF() {
             if (!checkMaturitaRules()) return;
 
@@ -689,51 +688,45 @@
             const sClass = document.getElementById('studentClass').value;
             const sYear = document.getElementById('schoolYear').value;
 
+            // HTML VZHLED PDF
+            // Přidáno !important ke všem barvám (background a color), aby PDF nepřebíralo dark mode prohlížeče!
+            // Zrušeno letter-spacing, aby se neničily mezery mezi slovy!
             let printHTML = `
-                <div style="width: 210mm; min-height: 297mm; background-color: #ffffff; color: #000000; padding: 20mm; box-sizing: border-box; font-family: Calibri, 'Segoe UI', Arial, sans-serif;">
+                <div style="background-color: #ffffff !important; color: #000000 !important; width: 210mm; min-height: 297mm; padding: 20mm; box-sizing: border-box; font-family: Arial, sans-serif;">
                     
-                    <table style="width: 100%; border-bottom: 1px solid #000000; padding-bottom: 15px; margin-bottom: 30px; border-collapse: collapse;">
+                    <table style="width: 100%; border-bottom: 1px solid #000000 !important; padding-bottom: 15px; margin-bottom: 30px; border-collapse: collapse;">
                         <tr>
-                            <td style="width: 20%; text-align: left; vertical-align: middle;">
-                                <div style="position: relative; width: 80px; height: 90px; text-align: center; color: #000000;">
-                                    <div style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; position: absolute; top: 0; width: 100%;">Gymnázium</div>
-                                    <div style="font-family: 'Times New Roman', serif; font-size: 80px; line-height: 1; position: absolute; top: 5px; width: 100%;">G</div>
-                                    <div style="position: absolute; top: 35px; width: 100%; height: 50px; display: flex; justify-content: center; align-items: flex-end;">
-                                        <div style="width: 1px; height: 30px; background: #000000; margin: 0 3px;"></div>
-                                        <div style="width: 1px; height: 45px; background: #000000; margin: 0 3px;"></div>
-                                        <div style="width: 1px; height: 30px; background: #000000; margin: 0 3px;"></div>
-                                    </div>
-                                    <div style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; position: absolute; bottom: -5px; width: 100%;">Příbram</div>
-                                </div>
+                            <td style="width: 100px; text-align: left; vertical-align: middle;">
+                                <img src="logo.png" style="max-width: 100px; max-height: 100px; width: auto; height: auto; display: block;" alt="Logo">
                             </td>
-                            <td style="width: 80%; text-align: center; vertical-align: middle;">
-                                <div style="font-size: 11pt; letter-spacing: 1px; color: #000000; font-weight: bold;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <div style="font-size: 11pt; color: #000000 !important; font-weight: bold;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
                             </td>
                         </tr>
                     </table>
                     
-                    <div style="text-align: center; margin-bottom: 40px; color: #000000;">
-                        <h1 style="font-size: 22pt; font-weight: normal; margin: 0 0 10px 0; letter-spacing: 1px;">SEZNAM ČETBY</h1>
+                    <div style="text-align: center; margin-bottom: 40px; color: #000000 !important;">
+                        <h1 style="font-size: 22pt; font-weight: normal; margin: 0 0 10px 0;">SEZNAM ČETBY</h1>
                         <h2 style="font-size: 12pt; font-weight: normal; margin: 0; line-height: 1.4;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</h2>
                     </div>
                     
-                    <table style="width: 100%; font-size: 11pt; margin-bottom: 15px; color: #000000; border-collapse: collapse;">
+                    <table style="width: 100%; font-size: 11pt; margin-bottom: 25px; color: #000000 !important; border-collapse: collapse;">
                         <tr>
                             <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno a příjmení:</td>
-                            <td style="border-bottom: 1px solid #000000; text-align: center; padding: 0 5px; width: 45%;">${sName || ''}</td>
+                            <td style="border-bottom: 1px solid #000000 !important; text-align: center; padding: 0 5px; width: 45%;">${sName || ''}</td>
                             <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 15px;">Třída:</td>
-                            <td style="width: 15%; border-bottom: 1px solid #000000; text-align: center; padding: 0 5px;">${sClass || ''}</td>
+                            <td style="width: 15%; border-bottom: 1px solid #000000 !important; text-align: center; padding: 0 5px;">${sClass || ''}</td>
                             <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 15px;">Školní rok:</td>
-                            <td style="width: 20%; border-bottom: 1px solid #000000; text-align: center; padding: 0 5px;">${sYear || ''}</td>
+                            <td style="width: 20%; border-bottom: 1px solid #000000 !important; text-align: center; padding: 0 5px;">${sYear || ''}</td>
                         </tr>
                     </table>
 
-                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 40px; color: #000000;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11pt; color: #000000 !important;">
                         <thead>
                             <tr>
-                                <th style="border: 1px solid #000000; padding: 6px 10px; width: 15%; text-align: center; font-weight: normal;">Číslo otázky</th>
-                                <th style="border: 1px solid #000000; padding: 6px 10px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
-                                <th style="border: 1px solid #000000; padding: 6px 10px; width: 50%; text-align: left; font-weight: normal;">Dílo</th>
+                                <th style="border: 1px solid #000000 !important; padding: 6px 10px; width: 15%; text-align: center; font-weight: normal;">Číslo otázky</th>
+                                <th style="border: 1px solid #000000 !important; padding: 6px 10px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
+                                <th style="border: 1px solid #000000 !important; padding: 6px 10px; width: 50%; text-align: left; font-weight: normal;">Dílo</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -743,9 +736,9 @@
                 const book = books.find(b => b.id === selectedIds[i]);
                 printHTML += `
                     <tr>
-                        <td style="border: 1px solid #000000; padding: 6px 10px; text-align: center;"><b>${i + 1}</b></td>
-                        <td style="border: 1px solid #000000; padding: 6px 10px;">${book.author}</td>
-                        <td style="border: 1px solid #000000; padding: 6px 10px;">${book.title}</td>
+                        <td style="border: 1px solid #000000 !important; padding: 6px 10px; text-align: center;"><b>${i + 1}</b></td>
+                        <td style="border: 1px solid #000000 !important; padding: 6px 10px;">${book.author}</td>
+                        <td style="border: 1px solid #000000 !important; padding: 6px 10px;">${book.title}</td>
                     </tr>
                 `;
             }
@@ -753,8 +746,8 @@
             printHTML += `
                         </tbody>
                     </table>
-                    <div style="float: right; width: 250px; text-align: center; font-size: 10pt; color: #000000; margin-top: 20px;">
-                        <div style="border-top: 1px solid #000000; margin-bottom: 5px;"></div>
+                    <div style="float: right; width: 250px; text-align: center; font-size: 10pt; color: #000000 !important; margin-top: 30px;">
+                        <div style="border-top: 1px solid #000000 !important; margin-bottom: 5px;"></div>
                         podpis studenta
                     </div>
                     <div style="clear: both;"></div>
@@ -861,3 +854,4 @@
     </script>
 </body>
 </html>
+
