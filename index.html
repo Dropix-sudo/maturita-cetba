@@ -40,7 +40,7 @@
 
         .print-only { display: none; }
         @media print {
-            @page { margin: 1cm; }
+            @page { margin: 0; }
             body { background: white; color: black; display: block; height: auto; overflow: visible; user-select: auto; }
             .sidebar, .main-content, .modal-overlay, .mobile-nav, #scrollTopBtn { display: none !important; }
             .print-only { display: block !important; }
@@ -82,7 +82,7 @@
         .selected-item-info strong { display: block; margin-bottom: 2px; color: var(--accent-dark); }
         .selected-item-author { font-size: 11px; color: var(--text-muted); }
 
-        .btn-remove { background: #fef2f2; border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
+        .btn-remove { background: #fef2f2; border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
         .btn-remove:hover { background: var(--accent-red); color: white; }
 
         .action-btns { display: flex; flex-direction: column; gap: 10px; }
@@ -139,52 +139,29 @@
         #sharedBooksList div:last-child { border-bottom: none; }
 
         #scrollTopBtn {
-            position: fixed;
-            bottom: 85px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
-            background-color: var(--accent-dark);
-            color: var(--accent-yellow);
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            z-index: 60;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; bottom: 85px; right: 20px; width: 48px; height: 48px; background-color: var(--accent-dark); color: var(--accent-yellow); border: none; border-radius: 50%; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); z-index: 60; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center;
         }
-        #scrollTopBtn.visible {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
+        #scrollTopBtn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
-        /* OPRAVA PRO MOBIL: Padding bottom pro kontejner knih a menu */
         @media (max-width: 900px) {
-            body { padding-bottom: 0; }
+            body { padding-bottom: 0; } 
             .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
             .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
             .mobile-nav-btn.active { color: var(--accent-dark); }
             .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); transition: var(--transition);}
             .mobile-nav-btn.active span.badge { border-color: var(--accent-yellow); background: var(--accent-yellow); color: #000; }
             
-            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 90px !important; display: none; box-sizing: border-box; }
-            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; padding-bottom: 0; }
+            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: none; box-sizing: border-box; padding-bottom: 130px !important; }
+            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; }
+            
+            .books-container { padding: 15px; gap: 8px; padding-bottom: 130px !important; }
+            .selected-books { padding-bottom: 130px !important; }
+            
             body.show-mylist .sidebar { display: flex; }
             body.show-mylist .main-content { display: none; }
             
             .search-bar { padding: 15px; }
             .search-bar input { padding: 12px 15px; font-size: 15px; }
-            .books-container { padding: 15px; gap: 8px; padding-bottom: 90px !important; }
-            .selected-books { padding-bottom: 30px !important; }
             
             .list-header { display: none; }
             .book-card { grid-template-columns: 30px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 14px 15px; gap: 5px; }
@@ -209,7 +186,7 @@
         <div class="modal-content">
             <h3 id="alertTitle">Upozornění</h3>
             <p id="alertMessage" style="text-align: center; margin-bottom: 20px;"></p>
-            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none;" onclick="closeAlert()">Rozumím</button>
+            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none; width:100%; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeAlert()">Rozumím</button>
         </div>
     </div>
 
@@ -219,8 +196,8 @@
             <p>Někdo s tebou sdílel tento seznam děl. Chceš jím přepsat svůj aktuální výběr?</p>
             <div id="sharedBooksList"></div>
             <div class="modal-btn-row">
-                <button class="modal-close" onclick="closeSharedModal()">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-yellow); color: #000; border: none;" onclick="acceptSharedList()">Přijmout seznam</button>
+                <button class="modal-close" onclick="closeSharedModal()" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-yellow); color: #000; border: none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="acceptSharedList()">Přijmout</button>
             </div>
         </div>
     </div>
@@ -255,8 +232,8 @@
             <h3>Vymazat seznam?</h3>
             <p style="text-align: center;">Opravdu chceš smazat všech vybraných děl? Tuto akci nelze vrátit.</p>
             <div class="modal-btn-row">
-                <button class="modal-close" onclick="closeModals()">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-red); color: white; border: none;" onclick="confirmClearSelection()">Vymazat vše</button>
+                <button class="modal-close" onclick="closeModals()" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-red); color: white; border: none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="confirmClearSelection()">Vymazat vše</button>
             </div>
         </div>
     </div>
@@ -300,7 +277,7 @@
             <button class="btn-modern btn-install" onclick="triggerInstall()">💻 Přidat na plochu</button>
             <button class="btn-modern btn-share" onclick="generateQR()">📲 Sdílet seznam (QR)</button>
             <button class="btn-modern btn-pdf" id="btnPdf" onclick="generatePDF()">🖨 Stáhnout PDF</button>
-            <button class="btn-modern btn-clear" onclick="showClearModal()">✖ Vymazat vše</button>
+            <button class="btn-modern btn-clear" onclick="document.getElementById('clearModal').style.display='flex'">✖ Vymazat vše</button>
         </div>
     </div>
 
@@ -742,66 +719,103 @@
             });
         }
 
+        function checkMaturitaRules() {
+            if (selectedIds.length !== 20) {
+                showAlert("Musíš mít vybráno přesně 20 knih!", "Nesplněno pravidlo");
+                return false;
+            }
+
+            let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+            let genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
+
+            selectedIds.forEach(id => {
+                const book = books.find(b => b.id === id);
+                counts[book.crit]++;
+                genreCounts[book.genre]++;
+            });
+
+            if (counts[1] < 2) { showAlert("Do konce 18. století musíš mít min. 2 díla.", "Chybí období"); return false; }
+            if (counts[2] < 3) { showAlert("Pro 19. století musíš mít min. 3 díla.", "Chybí období"); return false; }
+            if (counts[3] < 4) { showAlert("Pro Světovou literaturu 20./21. st. musíš mít min. 4 díla.", "Chybí období"); return false; }
+            if (counts[4] < 5) { showAlert("Pro Českou literaturu 20./21. st. musíš mít min. 5 děl.", "Chybí období"); return false; }
+
+            if (genreCounts['próza'] < 2) { showAlert("V seznamu musí být minimálně 2 prózy.", "Chybí literární druh"); return false; }
+            if (genreCounts['poezie'] < 2) { showAlert("V seznamu musí být minimálně 2 poezie.", "Chybí literární druh"); return false; }
+            if (genreCounts['drama'] < 2) { showAlert("V seznamu musí být minimálně 2 dramata.", "Chybí literární druh"); return false; }
+
+            return true;
+        }
+
         function generatePDF() {
-            if (selectedIds.length !== 20) { showAlert("Musíš mít vybráno přesně 20 knih!"); return; }
-            const sName = document.getElementById('studentName').value || "....................................................";
-            const sClass = document.getElementById('studentClass').value || "................";
-            const sYear = document.getElementById('schoolYear').value || "................";
+            if (!checkMaturitaRules()) return;
+            const sName = document.getElementById('studentName').value || "";
+            const sClass = document.getElementById('studentClass').value || "";
+            const sYear = document.getElementById('schoolYear').value || "";
 
-            // PŘESNÉ ROZVRŽENÍ PODLE OBRÁZKU S VYNUCENÍM NA JEDNU STRANU
+            // OPRAVA: Pevná výška a overflow hidden zaručí vygenerování jediné stránky.
             let printHTML = `
-                <div style="padding: 10mm 15mm; font-family: Arial, sans-serif; color: #000; background: #fff; width: 210mm; height: 296mm; box-sizing: border-box; overflow: hidden; position: relative;">
+                <div style="padding: 10mm 15mm; font-family: Arial, sans-serif; color: black; background: white; width: 210mm; height: 296mm; box-sizing: border-box; overflow: hidden; position: relative;">
                     
-                    <div style="position: relative; margin-bottom: 25px;">
-                        <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" style="width: 42px; position: absolute; left: 0; top: -5px;">
-                        <div style="margin-left: 65px; border-bottom: 1.2px solid #000; padding-bottom: 2px;">
-                            <div style="text-align: center; font-size: 8.5pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
-                        </div>
-                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                        <tr>
+                            <td style="width: 60px; vertical-align: bottom; padding-bottom: 5px;">
+                                <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" style="width: 50px; display: block;">
+                            </td>
+                            <td style="vertical-align: bottom;">
+                                <div style="text-align: center; font-size: 8pt; font-weight: bold; margin-bottom: 5px;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
+                                <div style="border-bottom: 1.5px solid black; width: 100%;"></div>
+                            </td>
+                        </tr>
+                    </table>
 
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="font-size: 32pt; font-weight: normal; margin: 0; padding: 0;">SEZNAM ČETBY</h1>
-                        <div style="font-size: 11pt; font-weight: normal; margin-top: 10px; line-height: 1.4;">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h1 style="font-size: 28pt; font-weight: normal; margin: 0 0 10px 0; font-family: Arial, sans-serif;">SEZNAM ČETBY</h1>
+                        <div style="font-size: 11pt; margin: 0; line-height: 1.4;">
                             K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 20px; font-size: 11pt; margin-bottom: 25px;">
-                        <div style="flex: 2;">Jméno: <span style="display: inline-block; border-bottom: 1px solid #000; width: 80%; text-align: center;">${sName === "...................................................." ? "&nbsp;" : sName}</span></div>
-                        <div style="flex: 1;">Třída: <span style="display: inline-block; border-bottom: 1px solid #000; width: 65%; text-align: center;">${sClass === "................" ? "&nbsp;" : sClass}</span></div>
-                        <div style="flex: 1.5;">Školní rok: <span style="display: inline-block; border-bottom: 1px solid #000; width: 60%; text-align: center;">${sYear === "................" ? "&nbsp;" : sYear}</span></div>
-                    </div>
+                    <table style="width: 100%; font-size: 10pt; margin-bottom: 15px; border-collapse: collapse;">
+                        <tr>
+                            <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno:</td>
+                            <td style="border-bottom: 1px solid black; width: 45%; padding: 0 5px; text-align: center;">${sName}</td>
+                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 15px;">Třída:</td>
+                            <td style="border-bottom: 1px solid black; width: 20%; padding: 0 5px; text-align: center;">${sClass}</td>
+                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 15px;">Školní rok:</td>
+                            <td style="border-bottom: 1px solid black; width: 30%; padding: 0 5px; text-align: center;">${sYear}</td>
+                        </tr>
+                    </table>
 
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; border: 1.5px solid #000;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10.5pt; border: 2px solid black;">
                         <thead>
                             <tr>
-                                <th style="border: 1px solid #000; padding: 8px; width: 15%; text-align: left; font-weight: normal;">Číslo otázky</th>
-                                <th style="border: 1px solid #000; padding: 8px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
-                                <th style="border: 1px solid #000; padding: 8px; width: 50%; text-align: left; font-weight: normal;">Dílo</th>
+                                <th style="border: 1px solid black; padding: 6px; width: 15%; text-align: center; font-weight: normal;">Číslo otázky</th>
+                                <th style="border: 1px solid black; padding: 6px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
+                                <th style="border: 1px solid black; padding: 6px; width: 50%; text-align: left; font-weight: normal;">Dílo</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${selectedIds.map((id, i) => {
                                 const b = books.find(x => x.id === id);
                                 return `<tr>
-                                    <td style="border: 1px solid #000; padding: 7px 10px; text-align: center; font-weight: bold;">${i+1}</td>
-                                    <td style="border: 1px solid #000; padding: 7px 10px;">${b.author}</td>
-                                    <td style="border: 1px solid #000; padding: 7px 10px;">${b.title}</td>
+                                    <td style="border: 1px solid black; padding: 5px 10px; text-align: center; font-weight: bold;">${i+1}</td>
+                                    <td style="border: 1px solid black; padding: 5px 10px;">${b.author}</td>
+                                    <td style="border: 1px solid black; padding: 5px 10px;">${b.title}</td>
                                 </tr>`;
                             }).join('')}
                         </tbody>
                     </table>
 
-                    <div style="margin-top: 60px; float: right; width: 260px; text-align: center; font-size: 10pt;">
-                        <div style="border-top: 1.2px solid #000; margin-bottom: 5px;"></div>
+                    <div style="margin-top: 40px; float: right; width: 250px; text-align: center; font-size: 9pt;">
+                        <div style="border-top: 1px solid black; margin-bottom: 5px;"></div>
                         podpis studenta
                     </div>
+                    <div style="clear: both;"></div>
                 </div>`;
 
             const opt = { 
                 margin: 0, filename: 'Seznam_cetby.pdf', image: { type: 'jpeg', quality: 1 }, 
-                html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'avoid-all' }
+                html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
             };
             
             const btn = document.getElementById('btnPdf');
