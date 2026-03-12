@@ -16,6 +16,7 @@
     <title>Selekce Četby | Gymnázium Příbram</title>
     <style>
         :root {
+            /* Styl inspirovaný webem Gymnázia Příbram */
             --bg-main: #f5f5f5; 
             --bg-panel: #ffffff; 
             --bg-card: #ffffff; 
@@ -24,8 +25,8 @@
             --text-muted: #666666;
             --accent-green: #16a34a; 
             --accent-red: #dc2626; 
-            --accent-yellow: #facc15; 
-            --accent-dark: #333333; 
+            --accent-yellow: #facc15; /* Žlutá z webu gymnázia */
+            --accent-dark: #333333; /* Tmavě šedá z hlavičky gymnázia */
             --border-color: #dddddd; 
             --radius: 8px; 
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -130,14 +131,14 @@
         .modal-btn-row button { flex: 1; }
 
         #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; border: 1px solid var(--border-color); }
-        
-        .share-link-btn { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); cursor: pointer; font-weight: bold; transition: var(--transition); margin-bottom: 15px; font-size: 13px; }
-        .share-link-btn:hover { background: #e5e5e5; }
+        .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; outline: none; }
 
+        /* Vzhled seznamu děl v modálu */
         #sharedBooksList { text-align: left; overflow-y: auto; max-height: 250px; margin-bottom: 15px; font-size: 13px; border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; background: var(--bg-main); }
         #sharedBooksList div { padding: 6px 0; border-bottom: 1px solid #eaeaea; }
         #sharedBooksList div:last-child { border-bottom: none; }
 
+        /* TLAČÍTKO SCROLL NAHORU */
         #scrollTopBtn {
             position: fixed;
             bottom: 85px;
@@ -212,7 +213,8 @@
         <div class="modal-content" style="display: flex; flex-direction: column;">
             <h3>Sdílený seznam četby</h3>
             <p>Někdo s tebou sdílel tento seznam děl. Chceš jím přepsat svůj aktuální výběr?</p>
-            <div id="sharedBooksList"></div>
+            <div id="sharedBooksList">
+                </div>
             <div class="modal-btn-row">
                 <button class="modal-close" onclick="closeSharedModal()">Zrušit</button>
                 <button class="modal-close" style="background: var(--accent-yellow); color: #000; border: none;" onclick="acceptSharedList()">Přijmout seznam</button>
@@ -239,8 +241,7 @@
                 <canvas id="qrCanvas"></canvas>
             </div>
 
-            <button id="copyLinkBtn" class="share-link-btn" onclick="copyShareLink()">🔗 Zkopírovat odkaz</button>
-
+            <input type="text" id="qrLink" class="share-link-input" readonly onclick="this.select()">
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
     </div>
@@ -308,8 +309,7 @@
     </div>
 
     <script>
-        let windowShareUrl = "";
-
+        // Logika pro SCROLL NAHORU
         function scrollToTop() {
             document.getElementById('booksContainer').scrollTo({ top: 0, behavior: 'smooth' });
             document.getElementById('sidebarContainer').scrollTo({ top: 0, behavior: 'smooth' });
@@ -327,6 +327,8 @@
         document.getElementById('booksContainer').addEventListener('scroll', handleScroll);
         document.getElementById('sidebarContainer').addEventListener('scroll', handleScroll);
 
+
+        // Ostatní funkce
         function showAlert(message, title = "Upozornění") {
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
@@ -773,32 +775,14 @@
             return true;
         }
 
-        function copyShareLink() {
-            if (windowShareUrl) {
-                navigator.clipboard.writeText(windowShareUrl).then(() => {
-                    const btn = document.getElementById('copyLinkBtn');
-                    const originalText = btn.innerText;
-                    btn.innerText = "✓ Odkaz zkopírován";
-                    btn.style.backgroundColor = "var(--accent-green)";
-                    btn.style.color = "white";
-                    setTimeout(() => {
-                        btn.innerText = "🔗 Zkopírovat odkaz";
-                        btn.style.backgroundColor = "var(--bg-hover)";
-                        btn.style.color = "var(--text-main)";
-                    }, 2000);
-                });
-            }
-        }
-
         function generateQR() {
             if (!checkMaturitaRules()) return;
             
             const currentUrl = window.location.href.split(/[?#]/)[0];
             const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
-            
-            windowShareUrl = shareUrl; // Uložit pro kopírování
 
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
+            document.getElementById('qrLink').value = shareUrl;
 
             document.getElementById('qrModal').style.display = 'flex';
 
