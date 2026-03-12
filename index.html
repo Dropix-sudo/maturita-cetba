@@ -5,22 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#ffffff">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%232563eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
-    <title>Selekce Četby</title>
+    <title>Selekce Četby | Gymnázium Příbram</title>
     <style>
         :root {
-            --bg-main: #121212; --bg-panel: #1a1a1a; --bg-card: #242424; --bg-hover: #333333;
-            --text-main: #ffffff; --text-muted: #a0a0a0;
-            --accent-green: #00e676; --accent-red: #ff1744; --accent-orange: #ff6d00; --accent-blue: #2979ff;
-            --border-color: #383838; --radius: 12px; --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Světlý, čistý "školní" design */
+            --bg-main: #f8fafc; 
+            --bg-panel: #ffffff; 
+            --bg-card: #ffffff; 
+            --bg-hover: #f1f5f9;
+            --text-main: #1e293b; 
+            --text-muted: #64748b;
+            --accent-green: #16a34a; 
+            --accent-red: #dc2626; 
+            --accent-blue: #2563eb; /* Oficiální modrá */
+            --accent-dark: #0f172a;
+            --border-color: #e2e8f0; 
+            --radius: 10px; 
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         body { margin: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; user-select: none; }
 
@@ -32,96 +47,99 @@
             .print-only { display: block !important; }
         }
 
-        .sidebar { width: 320px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; }
+        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.02); }
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
         .mobile-nav { display: none; }
 
-        .logo { font-size: 22px; font-weight: 800; margin-bottom: 24px; }
-        .logo span { color: var(--accent-orange); }
+        .logo { display: flex; align-items: center; gap: 15px; font-size: 19px; font-weight: 800; margin-bottom: 28px; color: var(--accent-dark); line-height: 1.1; letter-spacing: 0.5px; }
+        .logo img { width: 45px; height: auto; }
+        .logo span { color: var(--accent-blue); font-weight: 400; font-size: 16px;}
 
         .personal-info-wrapper { margin-bottom: 24px; }
         .btn-toggle-info { width: 100%; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; transition: var(--transition); }
-        .btn-toggle-info:hover { background: var(--bg-hover); }
-        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: rgba(255, 255, 255, 0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .btn-toggle-info:hover { background: var(--bg-hover); border-color: #cbd5e1; }
+        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: var(--bg-main); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); }
         .personal-info-content.open { display: flex; }
-        .personal-info-content input { padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: white; outline: none; font-size: 13px; }
-        .personal-info-content input:focus { border-color: var(--accent-orange); }
-        .disclaimer-text { font-size: 11px; color: #888; text-align: center; margin-top: 5px; padding-top: 10px; border-top: 1px dashed var(--border-color); line-height: 1.4; }
-        .disclaimer-text span { color: var(--accent-green); font-weight: bold; }
+        .personal-info-content input { padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); outline: none; font-size: 13px; transition: var(--transition); }
+        .personal-info-content input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .disclaimer-text { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 5px; padding-top: 10px; border-top: 1px dashed var(--border-color); line-height: 1.4; }
+        .disclaimer-text span { color: var(--accent-blue); font-weight: bold; }
 
-        .status-box { background: linear-gradient(145deg, #2a2a2a, #1f1f1f); border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .status-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
+        .status-box { background: var(--accent-blue); border: none; padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25); color: white; }
+        .status-label { font-size: 12px; color: rgba(255,255,255,0.8); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
         .status-total { font-size: 28px; font-weight: 800; margin-top: 5px; }
 
-        .section-header { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted); }
+        .section-header { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted); letter-spacing: 0.5px; }
 
         .criteria-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
         .crit-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
         .crit-btn:hover { background: var(--bg-hover); }
-        .crit-btn.active-filter { border-color: var(--accent-orange); box-shadow: 0 0 0 1px var(--accent-orange); }
+        .crit-btn.active-filter { border-color: var(--accent-blue); background: #eff6ff; color: var(--accent-blue); box-shadow: 0 0 0 1px var(--accent-blue); }
         .crit-btn .count.met { color: var(--accent-green); font-weight: bold; }
         .crit-btn .count.unmet { color: var(--accent-red); }
 
         .selected-books { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .selected-item { background: var(--bg-main); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 13px; }
-        .selected-item-info strong { display: block; margin-bottom: 2px; }
+        .selected-item { background: var(--bg-panel); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .selected-item-info strong { display: block; margin-bottom: 2px; color: var(--accent-dark); }
         .selected-item-author { font-size: 11px; color: var(--text-muted); }
 
-        .btn-remove { background: rgba(255, 23, 68, 0.1); border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
+        .btn-remove { background: rgba(220, 38, 38, 0.1); border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
         .btn-remove:hover { background: var(--accent-red); color: white; }
 
         .action-btns { display: flex; flex-direction: column; gap: 10px; }
         .btn-modern { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-install { background-color: #2e7d32; color: white; }
-        .btn-install:hover { background-color: #388e3c; }
-        .btn-pdf { background-color: var(--accent-orange); color: white; box-shadow: 0 4px 10px rgba(255, 109, 0, 0.3); }
-        .btn-pdf:hover { background-color: #e66200; transform: translateY(-2px); }
-        .btn-share { background-color: var(--accent-blue); color: white; }
-        .btn-share:hover { background-color: #1c54b2; }
-        .btn-clear { background-color: transparent; color: var(--accent-red); border: 1px solid rgba(255, 23, 68, 0.3); }
-        .btn-clear:hover { background-color: rgba(255, 23, 68, 0.1); }
+        .btn-install { background-color: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-install:hover { background-color: var(--bg-hover); }
+        .btn-pdf { background-color: var(--accent-dark); color: white; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2); }
+        .btn-pdf:hover { background-color: #1e293b; transform: translateY(-2px); }
+        .btn-share { background-color: var(--accent-blue); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+        .btn-share:hover { background-color: #1d4ed8; transform: translateY(-2px); }
+        .btn-clear { background-color: transparent; color: var(--accent-red); border: 1px dashed rgba(220, 38, 38, 0.4); }
+        .btn-clear:hover { background-color: rgba(220, 38, 38, 0.05); border-style: solid; }
 
-        .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; }
-        .search-bar input { width: 100%; padding: 16px 20px; background: var(--bg-main); border: 2px solid var(--border-color); color: white; border-radius: var(--radius); font-size: 16px; box-sizing: border-box; outline: none; }
-        .search-bar input:focus { border-color: var(--accent-orange); }
+        .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .search-bar input { width: 100%; padding: 16px 20px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius); font-size: 15px; box-sizing: border-box; outline: none; transition: var(--transition); }
+        .search-bar input:focus { border-color: var(--accent-blue); background: #ffffff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
-        .books-container { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
-        .book-card { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px 20px; text-align: left; cursor: pointer; transition: var(--transition); font-size: 14px; gap: 10px;}
-        .book-card:hover { background: var(--bg-hover); border-color: #555; }
-        .book-card.selected { background: rgba(0, 230, 118, 0.08); border-color: var(--accent-green); }
+        .books-container { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+        .book-card { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px 20px; text-align: left; cursor: pointer; transition: var(--transition); font-size: 14px; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);}
+        .book-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.04); transform: translateY(-1px); }
+        .book-card.selected { background: #f0fdf4; border-color: var(--accent-green); }
 
-        .check-circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
-        .check-circle::after { content: '✓'; color: transparent; font-size: 12px; font-weight: bold; }
+        .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; background: white; transition: var(--transition); }
+        .check-circle::after { content: '✓'; color: transparent; font-size: 13px; font-weight: bold; }
         .book-card.selected .check-circle { background: var(--accent-green); border-color: var(--accent-green); }
-        .book-card.selected .check-circle::after { color: #000; }
+        .book-card.selected .check-circle::after { color: white; }
 
-        .book-title { font-weight: 600; font-size: 15px; }
+        .book-title { font-weight: 600; font-size: 15px; color: var(--accent-dark); }
         .book-author { color: var(--text-muted); }
-        .book-crit { font-size: 12px; padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; text-align: center; color: var(--text-muted); }
-        .book-genre { font-size: 12px; padding: 6px 12px; background: rgba(255, 109, 0, 0.1); color: var(--accent-orange); border-radius: 20px; text-align: center; text-transform: capitalize;}
+        .book-crit { font-size: 12px; padding: 6px 12px; background: var(--bg-main); border-radius: 20px; text-align: center; color: var(--text-muted); font-weight: 500; border: 1px solid var(--border-color); }
+        .book-genre { font-size: 12px; padding: 6px 12px; background: #eff6ff; color: var(--accent-blue); border-radius: 20px; text-align: center; text-transform: capitalize; font-weight: 600; border: 1px solid rgba(37, 99, 235, 0.2); }
+        
+        .book-card.selected .book-crit, .book-card.selected .book-genre { background: rgba(255,255,255,0.7); border-color: transparent; }
 
-        .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; gap: 10px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; gap: 10px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--bg-panel); padding: 25px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-content h3 { margin-top: 0; color: var(--accent-orange); margin-bottom: 15px; }
-        .modal-content p { color: var(--text-main); font-size: 14px; line-height: 1.5; margin-bottom: 20px;}
-        .modal-close { background: var(--bg-card); border: 1px solid var(--border-color); color: white; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: var(--transition); }
-        .modal-close:hover { background: var(--bg-hover); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--bg-panel); padding: 30px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-content h3 { margin-top: 0; color: var(--accent-dark); margin-bottom: 15px; font-size: 20px; }
+        .modal-content p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px;}
+        .modal-close { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: var(--transition); }
+        .modal-close:hover { background: #e2e8f0; }
 
         .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
         .modal-btn-row button { flex: 1; }
 
-        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; }
-        .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; }
+        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; border: 1px solid var(--border-color); }
+        .share-link-input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-muted); box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 12px; outline: none; }
 
         @media (max-width: 900px) {
             body { padding-bottom: 60px; }
-            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; }
+            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
             .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
-            .mobile-nav-btn.active { color: var(--accent-orange); }
-            .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-card); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 3px; border: 1px solid var(--border-color); }
-            .mobile-nav-btn.active span.badge { border-color: var(--accent-orange); color: var(--text-main); }
+            .mobile-nav-btn.active { color: var(--accent-blue); }
+            .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); }
+            .mobile-nav-btn.active span.badge { border-color: var(--accent-blue); color: var(--accent-blue); background: #eff6ff; }
             .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 80px; display: none; }
             .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 60px; display: flex; }
             body.show-mylist .sidebar { display: flex; }
@@ -130,15 +148,15 @@
             .search-bar input { padding: 12px 15px; font-size: 15px; }
             .books-container { padding: 15px; gap: 8px; }
             .list-header { display: none; }
-            .book-card { grid-template-columns: 30px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 12px 15px; gap: 5px; }
+            .book-card { grid-template-columns: 30px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 14px 15px; gap: 5px; }
             .check-circle { grid-area: check; align-self: center; }
-            .book-title { grid-area: title; font-size: 14px; line-height: 1.2; }
+            .book-title { grid-area: title; font-size: 14px; line-height: 1.3; }
             .book-author { grid-area: author; font-size: 12px; margin-top: 2px; }
             .book-crit { grid-area: crit; justify-self: start; margin-top: 8px; padding: 4px 10px; font-size: 11px; }
             .book-genre { grid-area: genre; justify-self: end; margin-top: 8px; padding: 4px 10px; font-size: 11px; }
             .status-box { padding: 15px; margin-bottom: 15px; }
             .status-total { font-size: 24px; }
-            .logo { font-size: 18px; margin-bottom: 15px; }
+            .logo { font-size: 18px; margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -150,26 +168,26 @@
         <div class="modal-content">
             <h3 id="alertTitle">Upozornění</h3>
             <p id="alertMessage" style="text-align: center; margin-bottom: 20px;"></p>
-            <button class="modal-close" onclick="closeAlert()">Rozumím</button>
+            <button class="modal-close" style="background: var(--accent-blue); color: white; border: none;" onclick="closeAlert()">Rozumím</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="installModal">
         <div class="modal-content">
-            <h3>Zařízení blokuje rychlou instalaci</h3>
-            <p>Zabezpečení prohlížeče blokuje automatické okno. Přidej si aplikaci ručně:</p>
-            <p><strong>📱 iPhone:</strong><br>Klikni dole na <strong>ikonu sdílení</strong> a vyber <strong>Přidat na plochu</strong>.</p>
-            <p><strong>💻 Počítač / Android:</strong><br>V menu prohlížeče (⋮) zvol "Instalovat aplikaci" nebo "Přidat na domovskou obrazovku".</p>
-            <button class="modal-close" onclick="closeModals()">Rozumím</button>
+            <h3>Rychlá instalace</h3>
+            <p>Přidej si aplikaci ručně na plochu pro nejlepší zážitek:</p>
+            <p style="background: var(--bg-main); padding: 10px; border-radius: 8px; text-align: left; border: 1px solid var(--border-color);"><strong>📱 iPhone:</strong><br>Klikni dole na sdílení a vyber <strong>Přidat na plochu</strong>.</p>
+            <p style="background: var(--bg-main); padding: 10px; border-radius: 8px; text-align: left; border: 1px solid var(--border-color);"><strong>💻 Android / PC:</strong><br>V menu prohlížeče (⋮) zvol <strong>Instalovat aplikaci</strong>.</p>
+            <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
-            <h3>Tvůj seznam (QR kód)</h3>
-            <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na GitHubu.</p>
+            <h3>Sdílet seznam</h3>
+            <p id="qrWarning" style="color: #ff5252; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na webu.</p>
             
-            <div style="background: white; padding: 15px; border-radius: 8px; display: inline-block;">
+            <div id="qrCodeContainer">
                 <canvas id="qrCanvas"></canvas>
             </div>
 
@@ -183,8 +201,8 @@
             <h3>Vymazat seznam?</h3>
             <p style="text-align: center;">Opravdu chceš smazat všech vybraných děl? Tuto akci nelze vrátit.</p>
             <div class="modal-btn-row">
-                <button class="modal-close" style="background: var(--bg-hover);" onclick="closeModals()">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-red); border-color: var(--accent-red);" onclick="confirmClearSelection()">Vymazat</button>
+                <button class="modal-close" onclick="closeModals()">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-red); color: white; border: none;" onclick="confirmClearSelection()">Vymazat vše</button>
             </div>
         </div>
     </div>
@@ -195,16 +213,21 @@
     </div>
 
     <div class="sidebar">
-        <div class="logo">SELEKCE<span>ČETBY</span></div>
+        <div class="logo">
+            <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" alt="Gymnázium Příbram">
+            <div>SELEKCE<br><span>ČETBY</span></div>
+        </div>
+        
         <div class="personal-info-wrapper">
             <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Osobní údaje <span id="infoArrow">▼</span></button>
             <div class="personal-info-content" id="personalInfoContent">
                 <input type="text" id="studentName" placeholder="Jméno a příjmení">
                 <input type="text" id="studentClass" placeholder="Třída (např. 4.A)">
                 <input type="text" id="schoolYear" placeholder="Školní rok (např. 2025/2026)">
-                <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje se ukládají pouze v tvém prohlížeči.</div>
+                <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje zůstávají jen ve tvém zařízení.</div>
             </div>
         </div>
+        
         <div class="status-box">
             <div class="status-label">Stav Výběru</div>
             <div class="status-total" id="totalCount">0 / 20</div>
@@ -228,7 +251,9 @@
     </div>
 
     <div class="main-content">
-        <div class="search-bar"><input type="text" id="searchInput" placeholder="Hledat dílo či autora..." onkeyup="renderBooks()"></div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Hledat dílo či autora..." onkeyup="renderBooks()">
+        </div>
         <div class="list-header"><div></div><div>Dílo</div><div>Autor</div><div style="text-align: center;">Období</div><div style="text-align: center;">Druh</div></div>
         <div class="books-container" id="booksContainer"></div>
     </div>
@@ -660,10 +685,8 @@
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
             document.getElementById('qrLink').value = shareUrl;
 
-            // Ukaž modál hned
             document.getElementById('qrModal').style.display = 'flex';
 
-            // Zpožděný render QRious přímo na Canvas prvek
             setTimeout(() => {
                 try {
                     const canvas = document.getElementById('qrCanvas');
@@ -688,7 +711,6 @@
             const sClass = document.getElementById('studentClass').value;
             const sYear = document.getElementById('schoolYear').value;
 
-            // HTML VZHLED PDF přesně podle předlohy
             let printHTML = `
                 <div style="background-color: #ffffff !important; color: #000000 !important; width: 210mm; min-height: 297mm; padding: 20mm; box-sizing: border-box; font-family: Arial, sans-serif;">
                     
@@ -784,16 +806,18 @@
             
             const totalCountEl = document.getElementById('totalCount');
             totalCountEl.innerText = `${selectedIds.length} / 20`;
-            totalCountEl.style.color = selectedIds.length === 20 ? 'var(--accent-green)' : 'white';
+            totalCountEl.style.color = selectedIds.length === 20 ? 'white' : 'white';
             
             const mobileBadge = document.getElementById('mobileBadge');
             mobileBadge.innerText = `${selectedIds.length}/20`;
             if (selectedIds.length === 20) {
-                mobileBadge.style.borderColor = 'var(--accent-green)';
-                mobileBadge.style.color = 'var(--accent-green)';
+                mobileBadge.style.borderColor = 'var(--accent-blue)';
+                mobileBadge.style.color = 'var(--accent-blue)';
+                mobileBadge.style.background = '#eff6ff';
             } else {
                 mobileBadge.style.borderColor = '';
                 mobileBadge.style.color = '';
+                mobileBadge.style.background = '';
             }
 
             let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
