@@ -241,7 +241,7 @@
                 <canvas id="qrCanvas"></canvas>
             </div>
 
-            <button id="copyLinkBtn" class="share-link-btn" onclick="copyShareLink()">Kopírovat text</button>
+            <button id="copyLinkBtn" class="share-link-btn modal-close" onclick="copyShareLink()">Kopírovat text</button>
             <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
     </div>
@@ -679,7 +679,7 @@
                 btn.style.color = "white";
                 setTimeout(() => {
                     btn.innerText = "Kopírovat text"; 
-                    btn.style.backgroundColor = "var(--bg-hover)";
+                    btn.style.backgroundColor = "var(--bg-main)";
                     btn.style.color = "var(--text-main)";
                 }, 2000);
             });
@@ -996,6 +996,7 @@
     </script>
 </body>
 </html>
+
 
 
 
