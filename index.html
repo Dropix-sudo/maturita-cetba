@@ -33,93 +33,80 @@
 
         body { margin: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; user-select: none; }
 
-        /* Sidebar & Layout */
-        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.03); scroll-behavior: smooth; }
+        /* PDF Area */
+        .print-only { display: none; }
+
+        /* Sidebar */
+        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; scroll-behavior: smooth; }
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
         .mobile-nav { display: none; }
 
-        .logo { display: flex; align-items: center; gap: 15px; font-size: 19px; font-weight: 800; margin-bottom: 28px; color: var(--accent-dark); line-height: 1.1; letter-spacing: 0.5px; }
+        .logo { display: flex; align-items: center; gap: 15px; font-size: 19px; font-weight: 800; margin-bottom: 28px; color: var(--accent-dark); line-height: 1.1; }
         .logo img { width: 45px; height: auto; }
-        .logo span { color: var(--text-muted); font-weight: 400; font-size: 16px;}
 
-        .personal-info-wrapper { margin-bottom: 24px; }
-        .btn-toggle-info { width: 100%; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px; border-radius: var(--radius); cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; transition: var(--transition); }
-        .btn-toggle-info:hover { background: var(--bg-hover); border-color: #bbbbbb; }
-        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: var(--bg-main); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border-color); }
+        .personal-info-wrapper { margin-bottom: 20px; }
+        .btn-toggle-info { width: 100%; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius); cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; }
+        .personal-info-content { display: none; flex-direction: column; gap: 10px; margin-top: 10px; background: var(--bg-main); padding: 15px; border-radius: var(--radius); }
         .personal-info-content.open { display: flex; }
-        .personal-info-content input { padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); outline: none; font-size: 13px; transition: var(--transition); }
-        .personal-info-content input:focus { border-color: var(--accent-dark); }
+        .personal-info-content input { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: #fff; outline: none; }
 
-        .status-box { background: var(--accent-dark); border: none; padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; color: white; }
-        .status-label { font-size: 12px; color: rgba(255,255,255,0.7); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-        .status-total { font-size: 28px; font-weight: 800; margin-top: 5px; color: var(--accent-yellow); }
+        .status-box { background: var(--accent-dark); padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; color: white; }
+        .status-total { font-size: 28px; font-weight: 800; color: var(--accent-yellow); }
 
-        .section-header { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted); letter-spacing: 0.5px; }
-
-        .criteria-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
-        .crit-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: var(--radius); color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
-        .crit-btn:hover { background: var(--bg-hover); }
-        .crit-btn.active-filter { border-color: var(--accent-dark); background: #f9f9f9; box-shadow: 0 0 0 1px var(--accent-dark); }
+        .section-header { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; color: var(--text-muted); }
+        .criteria-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+        .crit-btn { display: flex; justify-content: space-between; width: 100%; background: #fff; border: 1px solid var(--border-color); padding: 10px 14px; border-radius: var(--radius); cursor: pointer; font-size: 13px; }
+        .crit-btn.active-filter { border-color: var(--accent-dark); background: #f9f9f9; }
         .crit-btn .count.met { color: var(--accent-green); font-weight: bold; }
         .crit-btn .count.unmet { color: var(--accent-red); }
 
-        .selected-books { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .selected-item { background: var(--bg-panel); padding: 12px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 13px; }
-        .selected-item-info strong { display: block; margin-bottom: 2px; color: var(--accent-dark); }
-        .selected-item-author { font-size: 11px; color: var(--text-muted); }
+        .selected-books { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
+        .selected-item { background: #fff; padding: 10px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 12px; }
+        .btn-remove { background: #fef2f2; border: none; color: var(--accent-red); width: 24px; height: 24px; border-radius: 4px; cursor: pointer; }
 
-        .btn-remove { background: #fef2f2; border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
-        .btn-remove:hover { background: var(--accent-red); color: white; }
+        .action-btns { display: flex; flex-direction: column; gap: 8px; }
+        .btn-modern { width: 100%; padding: 12px; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-pdf { background-color: var(--accent-yellow); color: #000; }
+        .btn-share { background-color: var(--accent-dark); color: #fff; }
 
-        .action-btns { display: flex; flex-direction: column; gap: 10px; }
-        .btn-modern { width: 100%; padding: 14px; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-pdf { background-color: var(--accent-yellow); color: black; box-shadow: 0 4px 10px rgba(250, 204, 21, 0.2); }
-        .btn-share { background-color: var(--accent-dark); color: white; }
-        .btn-clear { background-color: transparent; color: var(--accent-red); border: 1px dashed rgba(220, 38, 38, 0.4); }
+        /* Main Content */
+        .search-bar { padding: 20px; background: #fff; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; }
+        .search-bar input { width: 100%; padding: 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius); outline: none; }
 
-        /* Search & Books */
-        .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; }
-        .search-bar input { width: 100%; padding: 16px 20px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius); font-size: 15px; box-sizing: border-box; outline: none; transition: var(--transition); }
-        .search-bar input:focus { border-color: var(--accent-dark); background: #ffffff; }
+        .books-container { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; }
+        .book-card { display: grid; grid-template-columns: 30px 1fr 1fr 140px 90px; align-items: center; background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px 16px; cursor: pointer; font-size: 13px; gap: 10px; transition: 0.2s;}
+        .book-card:hover { border-color: #999; }
+        .book-card.selected { border-color: var(--accent-dark); background: #fafafa; }
 
-        .books-container { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-        .book-card { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px 20px; text-align: left; cursor: pointer; transition: var(--transition); font-size: 14px; gap: 10px;}
-        .book-card:hover { border-color: #aaaaaa; box-shadow: 0 4px 6px rgba(0,0,0,0.03); transform: translateY(-1px); }
-        .book-card.selected { background: #fafafa; border-color: var(--accent-dark); }
-
-        .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cccccc; display: flex; align-items: center; justify-content: center; background: white; transition: var(--transition); }
-        .check-circle::after { content: '✓'; color: transparent; font-size: 13px; font-weight: bold; }
+        .check-circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc; display: flex; align-items: center; justify-content: center; }
         .book-card.selected .check-circle { background: var(--accent-yellow); border-color: var(--accent-yellow); }
-        .book-card.selected .check-circle::after { color: #000; }
-
-        /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(3px); }
-        .modal-content { background: var(--bg-panel); padding: 30px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; border: 1px solid var(--border-color); }
-        .share-link-btn { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); cursor: pointer; font-weight: bold; transition: var(--transition); margin-bottom: 15px; font-size: 13px; }
+        .book-card.selected .check-circle::after { content: '✓'; color: #000; font-size: 12px; font-weight: bold; }
 
         #scrollTopBtn {
-            position: fixed; bottom: 85px; right: 20px; width: 48px; height: 48px; background-color: var(--accent-dark); color: var(--accent-yellow); border: none; border-radius: 50%; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); z-index: 60; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center;
+            position: fixed; bottom: 85px; right: 20px; width: 45px; height: 45px; background: var(--accent-dark); color: var(--accent-yellow); border: none; border-radius: 50%; font-size: 20px; cursor: pointer; opacity: 0; transition: 0.3s; z-index: 60; display: flex; align-items: center; justify-content: center;
         }
-        #scrollTopBtn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        #scrollTopBtn.visible { opacity: 1; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(2px); }
+        .modal-content { background: #fff; padding: 25px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; }
+        .share-link-btn { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd; background: #f9f9f9; cursor: pointer; font-weight: bold; }
 
         @media (max-width: 900px) {
-            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
-            .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
-            .mobile-nav-btn.active { color: var(--accent-dark); }
-            .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); }
-            .mobile-nav-btn.active span.badge { border-color: var(--accent-yellow); background: var(--accent-yellow); color: #000; }
-            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 100px; display: none; }
-            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; }
-            .books-container, .selected-books { padding-bottom: 120px !important; }
+            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff; border-top: 1px solid var(--border-color); z-index: 50; }
+            .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; border: none; background: none; color: #666; }
+            .mobile-nav-btn.active { color: #000; font-weight: bold; }
+            .mobile-nav-btn .badge { background: var(--accent-yellow); padding: 2px 6px; border-radius: 10px; color: #000; margin-top: 2px; font-size: 10px; }
+            .sidebar { position: absolute; width: 100%; display: none; height: 100vh; padding-bottom: 120px; }
+            .main-content { height: 100vh; }
             body.show-mylist .sidebar { display: flex; }
             body.show-mylist .main-content { display: none; }
-            .book-card { grid-template-columns: 30px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 14px 15px; gap: 5px; }
-            .check-circle { grid-area: check; align-self: center; }
-            .book-title { grid-area: title; font-size: 14px; }
-            .book-author { grid-area: author; font-size: 12px; }
-            .book-crit { grid-area: crit; justify-self: start; padding: 4px 10px; font-size: 11px; }
-            .book-genre { grid-area: genre; justify-self: end; padding: 4px 10px; font-size: 11px; }
+            .books-container { padding-bottom: 120px; }
+            .book-card { grid-template-columns: 25px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 12px; }
+            .book-title { grid-area: title; }
+            .book-author { grid-area: author; font-size: 11px; }
+            .book-crit { grid-area: crit; justify-self: start; font-size: 10px; }
+            .book-genre { grid-area: genre; justify-self: end; font-size: 10px; }
         }
     </style>
 </head>
@@ -131,18 +118,18 @@
         <div class="modal-content">
             <h3 id="alertTitle">Upozornění</h3>
             <p id="alertMessage"></p>
-            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none; width:100%; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeAlert()">Rozumím</button>
+            <button class="modal-close" style="width:100%; padding:10px; background: #333; color: #fff; border: none; border-radius: 4px;" onclick="document.getElementById('alertModal').style.display='none'">Rozumím</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="sharedListModal" style="z-index: 150;">
         <div class="modal-content">
             <h3>Sdílený seznam</h3>
-            <p>Chceš přepsat svůj výběr tímto sdíleným seznamem?</p>
-            <div id="sharedBooksList" style="text-align:left; max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; margin-bottom:15px; font-size:12px;"></div>
+            <p>Někdo s tebou sdílel tento seznam děl. Chceš ho načíst?</p>
+            <div id="sharedBooksList" style="text-align:left; max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; margin-bottom:15px; font-size:12px; background: #f9f9f9;"></div>
             <div style="display:flex; gap:10px;">
-                <button class="modal-close" onclick="closeModals()" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-yellow); color:black; border:none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="acceptSharedList()">Přijmout</button>
+                <button class="modal-close" onclick="closeModals()" style="flex:1; padding:10px;">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-yellow); border:none; flex:1; padding:10px;" onclick="acceptSharedList()">Přijmout</button>
             </div>
         </div>
     </div>
@@ -152,19 +139,19 @@
             <h3>Sdílet seznam</h3>
             <div id="qrCodeContainer"><canvas id="qrCanvas"></canvas></div>
             <button id="copyLinkBtn" class="share-link-btn" onclick="copyShareLink()">🔗 Zkopírovat odkaz</button>
-            <button class="modal-close" style="width:100%; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeModals()">Zavřít</button>
+            <button class="modal-close" style="width:100%; padding:10px;" onclick="closeModals()">Zavřít</button>
         </div>
     </div>
 
     <div class="mobile-nav">
-        <button class="mobile-nav-btn active" id="navBooks" onclick="switchMobileTab('books')">📚 Nabídka děl</button>
-        <button class="mobile-nav-btn" id="navList" onclick="switchMobileTab('list')">🎒 Můj seznam <span class="badge" id="mobileBadge">0/20</span></button>
+        <button class="mobile-nav-btn active" id="navBooks" onclick="switchMobileTab('books')">📚 Nabídka</button>
+        <button class="mobile-nav-btn" id="navList" onclick="switchMobileTab('list')">🎒 Seznam <span class="badge" id="mobileBadge">0/20</span></button>
     </div>
 
     <div class="sidebar" id="sidebarContainer">
         <div class="logo">
             <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" alt="G">
-            <div>SELEKCE<br><span>ČETBY</span></div>
+            <div>SELEKCE<br><span style="color:#666; font-weight:400;">ČETBY</span></div>
         </div>
         <div class="personal-info-wrapper">
             <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Osobní údaje <span id="infoArrow">▼</span></button>
@@ -175,27 +162,19 @@
             </div>
         </div>
         <div class="status-box"><div class="status-label">Stav Výběru</div><div class="status-total" id="totalCount">0 / 20</div></div>
-        <div class="section-header">Období</div><div class="criteria-list" id="criteriaList"></div>
-        <div class="section-header">Literární druh</div><div class="criteria-list" id="genreList"></div>
-        <div class="section-header">Můj seznam</div><div class="selected-books" id="selectedList"></div>
+        <div class="section-header">Filtrovat období</div><div class="criteria-list" id="criteriaList"></div>
+        <div class="section-header">Filtrovat druh</div><div class="criteria-list" id="genreList"></div>
+        <div class="section-header">Můj výběr</div><div class="selected-books" id="selectedList"></div>
         <div class="action-btns">
-            <button class="btn-modern btn-share" onclick="generateQR()">📲 Sdílet seznam (QR)</button>
+            <button class="btn-modern btn-share" onclick="generateQR()">📲 Sdílet (QR)</button>
             <button class="btn-modern btn-pdf" id="btnPdf" onclick="generatePDF()">🖨 Stáhnout PDF</button>
-            <button class="btn-modern btn-clear" onclick="document.getElementById('clearModal').style.display='flex'">✖ Vymazat vše</button>
+            <button class="btn-modern" style="background:#fef2f2; color:#dc2626; border:1px dashed #f87171;" onclick="selectedIds=[];updateApp();">✖ Vymazat vše</button>
         </div>
     </div>
 
     <div class="main-content">
         <div class="search-bar"><input type="text" id="searchInput" placeholder="Hledat dílo či autora..." onkeyup="renderBooks()"></div>
         <div class="books-container" id="booksContainer"></div>
-    </div>
-
-    <div class="modal-overlay" id="clearModal">
-        <div class="modal-content">
-            <h3>Smazat vše?</h3><p>Opravdu chceš vymazat celý svůj výběr?</p>
-            <div style="display:flex; gap:10px;"><button class="modal-close" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeModals()">Ne</button>
-            <button class="modal-close" style="background:var(--accent-red); color:white; border:none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="confirmClearSelection()">Smazat</button></div>
-        </div>
     </div>
 
     <script>
@@ -509,7 +488,7 @@
         function toggleBook(id) {
             if (selectedIds.includes(id)) selectedIds = selectedIds.filter(bid => bid !== id);
             else if (selectedIds.length < 20) selectedIds.push(id);
-            else showAlert("Už máš 20 knih!");
+            else showAlert("Už máš 20 děl! Pro přidání jiného musíš nějaké smazat.");
             updateApp();
         }
 
@@ -563,82 +542,86 @@
         }
 
         function generatePDF() {
+            if (selectedIds.length !== 20) {
+                showAlert("Musíš mít vybráno přesně 20 knih!");
+                return;
+            }
+
             const sName = document.getElementById('studentName').value || "....................................................";
             const sClass = document.getElementById('studentClass').value || "................";
             const sYear = document.getElementById('schoolYear').value || "................";
 
             let printHTML = `
-                <div style="padding: 15mm; font-family: 'Arial', sans-serif; color: black; background: white;">
+                <div style="padding: 10mm; font-family: Arial, sans-serif; color: black; background: white; line-height: 1.1;">
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         <tr>
-                            <td style="width: 50px;"><img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" style="width: 45px;"></td>
-                            <td style="vertical-align: middle; border-bottom: 2px solid black; text-align: center; font-size: 10pt; font-weight: bold; text-transform: uppercase;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</td>
+                            <td style="width: 60px; vertical-align: middle;"><img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" style="width: 50px;"></td>
+                            <td style="vertical-align: middle; border-bottom: 1px solid black; text-align: center; font-size: 8pt; font-weight: bold;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</td>
                         </tr>
                     </table>
                     
                     <div style="text-align: center; margin-bottom: 25px;">
-                        <h1 style="font-size: 24pt; margin: 0; font-weight: bold;">SEZNAM ČETBY</h1>
-                        <p style="font-size: 10pt; margin: 5px 0;">K ústní zkoušce z českého jazyka a literatury společné části maturitní zkoušky</p>
+                        <h1 style="font-size: 26pt; margin: 0; font-weight: normal;">SEZNAM ČETBY</h1>
+                        <p style="font-size: 11pt; margin: 5px 0;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</p>
                     </div>
 
-                    <table style="width: 100%; font-size: 11pt; margin-bottom: 20px; border-collapse: collapse;">
+                    <table style="width: 100%; font-size: 10pt; margin-bottom: 15px; border-collapse: collapse;">
                         <tr>
-                            <td style="padding: 5px 0;"><strong>Jméno a příjmení:</strong> ${sName}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 5px 0;"><strong>Třída:</strong> ${sClass} <span style="margin-left: 30px;"><strong>Školní rok:</strong> ${sYear}</span></td>
+                            <td style="width: 1%; white-space: nowrap;">Jméno:</td>
+                            <td style="border-bottom: 1px solid black; text-align: center; padding: 0 10px;">${sName}</td>
+                            <td style="width: 1%; white-space: nowrap; padding-left: 20px;">Třída:</td>
+                            <td style="width: 15%; border-bottom: 1px solid black; text-align: center;">${sClass}</td>
+                            <td style="width: 1%; white-space: nowrap; padding-left: 20px;">Školní rok:</td>
+                            <td style="width: 20%; border-bottom: 1px solid black; text-align: center;">${sYear}</td>
                         </tr>
                     </table>
 
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; border: 1.5px solid black;">
                         <thead>
-                            <tr style="background-color: #f2f2f2;">
-                                <th style="border: 1px solid black; padding: 6px; width: 35px; text-align: center;">Č.</th>
-                                <th style="border: 1px solid black; padding: 6px; text-align: left;">Autor</th>
-                                <th style="border: 1px solid black; padding: 6px; text-align: left;">Dílo</th>
+                            <tr style="background: #e9e9e9;">
+                                <th style="border: 1px solid black; padding: 6px; width: 15%; text-align: left; font-weight: normal;">Číslo otázky</th>
+                                <th style="border: 1px solid black; padding: 6px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
+                                <th style="border: 1px solid black; padding: 6px; width: 50%; text-align: left; font-weight: normal;">Dílo</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${Array.from({length: 20}).map((_, i) => {
                                 const b = books.find(x => x.id === selectedIds[i]) || {author:"", title:""};
-                                return `
-                                <tr style="height: 24px;">
-                                    <td style="border: 1px solid black; padding: 4px; text-align: center; font-weight: bold;">${i+1}</td>
-                                    <td style="border: 1px solid black; padding: 4px;">${b.author}</td>
-                                    <td style="border: 1px solid black; padding: 4px;">${b.title}</td>
+                                return `<tr>
+                                    <td style="border: 1px solid black; padding: 5px 8px; text-align: center; font-weight: bold;">${i+1}</td>
+                                    <td style="border: 1px solid black; padding: 5px 8px;">${b.author}</td>
+                                    <td style="border: 1px solid black; padding: 5px 8px;">${b.title}</td>
                                 </tr>`;
                             }).join('')}
                         </tbody>
                     </table>
 
-                    <div style="margin-top: 40px; width: 100%; font-size: 10pt;">
-                        <div style="float: left;">V Příbrami dne ...........................</div>
-                        <div style="float: right; text-align: center; width: 200px;">
-                            <div style="border-top: 1px solid black; margin-bottom: 3px;"></div>
-                            podpis studenta
-                        </div>
-                        <div style="clear: both;"></div>
+                    <div style="margin-top: 40px; float: right; width: 250px; text-align: center; font-size: 9pt;">
+                        <div style="border-top: 1px solid black; margin-bottom: 4px;"></div>
+                        podpis studenta
                     </div>
+                    <div style="clear: both;"></div>
                 </div>`;
 
-            const opt = {
-                margin: 0,
-                filename: 'Seznam_cetby.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            const opt = { 
+                margin: 0, 
+                filename: 'Seznam_cetby.pdf', 
+                image: { type: 'jpeg', quality: 0.98 }, 
+                html2canvas: { scale: 2, useCORS: true }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
             };
-
-            html2pdf().set(opt).from(printHTML).save();
+            
+            const btn = document.getElementById('btnPdf');
+            btn.innerText = "⏳ Generuji...";
+            html2pdf().set(opt).from(printHTML).save().then(() => btn.innerText = "🖨 Stáhnout PDF");
         }
 
         function showAlert(m) { document.getElementById('alertMessage').innerText = m; document.getElementById('alertModal').style.display = 'flex'; }
-        function closeAlert() { document.getElementById('alertModal').style.display = 'none'; }
-        function confirmClearSelection() { selectedIds = []; closeModals(); updateApp(); }
         function switchMobileTab(t) {
             document.body.classList.toggle('show-mylist', t === 'list');
             document.getElementById('navBooks').classList.toggle('active', t === 'books');
             document.getElementById('navList').classList.toggle('active', t === 'list');
+            scrollToTop();
         }
     </script>
 </body>
