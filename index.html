@@ -667,7 +667,23 @@
             content.classList.toggle('open');
             arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
         }
+        function copyShareLink() {
+            // Vezme aktuální URL a přidá k ní vybrané knihy
+            const currentUrl = window.location.href.split(/[?#]/)[0];
+            const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
 
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                const btn = document.getElementById('copyLinkBtn');
+                btn.innerText = "✓ Zkopírováno"; 
+                btn.style.backgroundColor = "var(--accent-green)";
+                btn.style.color = "white";
+                setTimeout(() => {
+                    btn.innerText = "Kopírovat text"; 
+                    btn.style.backgroundColor = "var(--bg-hover)";
+                    btn.style.color = "var(--text-main)";
+                }, 2000);
+            });
+        }
         function renderBooks() {
             const filterText = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('booksContainer');
@@ -977,4 +993,5 @@
     </script>
 </body>
 </html>
+
 
