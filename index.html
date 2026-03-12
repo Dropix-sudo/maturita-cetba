@@ -793,32 +793,35 @@
 
         function generateQR() {
             if (!checkMaturitaRules()) return;
-            
+    
             const currentUrl = window.location.href.split(/[?#]/)[0];
             const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
+    
+            // Tuto proměnnou využívá naše nové tlačítko pro kopírování
+            windowShareUrl = shareUrl; 
 
             document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
-            document.getElementById('qrLink').value = shareUrl;
 
+            // Zobrazí vyskakovací okno
             document.getElementById('qrModal').style.display = 'flex';
 
+            // Vykreslí samotný QR kód
             setTimeout(() => {
-                try {
-                    const canvas = document.getElementById('qrCanvas');
-                    const qr = new QRious({
-                        element: canvas,
-                        value: shareUrl,
-                        size: 200,
-                        background: 'white',
-                        foreground: 'black',
-                        level: 'L'
+            try {
+                const canvas = document.getElementById('qrCanvas');
+                const qr = new QRious({
+                    element: canvas,
+                    value: shareUrl,
+                    size: 200,
+                    background: 'white',
+                    foreground: 'black',
+                    level: 'L'
                     });
                 } catch(e) {
                     console.error("QR Error", e);
                 }
             }, 100);
         }
-
         function generatePDF() {
             if (!checkMaturitaRules()) return;
 
@@ -993,5 +996,6 @@
     </script>
 </body>
 </html>
+
 
 
