@@ -82,7 +82,7 @@
         .selected-item-info strong { display: block; margin-bottom: 2px; color: var(--accent-dark); }
         .selected-item-author { font-size: 11px; color: var(--text-muted); }
 
-        .btn-remove { background: #fef2f2; border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+        .btn-remove { background: #fef2f2; border: none; color: var(--accent-red); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: var(--transition); }
         .btn-remove:hover { background: var(--accent-red); color: white; }
 
         .action-btns { display: flex; flex-direction: column; gap: 10px; }
@@ -168,25 +168,19 @@
         }
 
         @media (max-width: 900px) {
-            body { padding-bottom: 0; }
+            body { padding-bottom: 60px; }
             .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
             .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
             .mobile-nav-btn.active { color: var(--accent-dark); }
             .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); transition: var(--transition);}
             .mobile-nav-btn.active span.badge { border-color: var(--accent-yellow); background: var(--accent-yellow); color: #000; }
-            
-            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: none; box-sizing: border-box; padding-bottom: 130px !important; }
-            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; }
-            
-            .books-container { padding: 15px; gap: 8px; padding-bottom: 130px !important; }
-            .selected-books { padding-bottom: 130px !important; }
-            
+            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 80px; display: none; }
+            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 60px; display: flex; }
             body.show-mylist .sidebar { display: flex; }
             body.show-mylist .main-content { display: none; }
-            
             .search-bar { padding: 15px; }
             .search-bar input { padding: 12px 15px; font-size: 15px; }
-            
+            .books-container { padding: 15px; gap: 8px; }
             .list-header { display: none; }
             .book-card { grid-template-columns: 30px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 14px 15px; gap: 5px; }
             .check-circle { grid-area: check; align-self: center; }
@@ -210,7 +204,7 @@
         <div class="modal-content">
             <h3 id="alertTitle">Upozornění</h3>
             <p id="alertMessage" style="text-align: center; margin-bottom: 20px;"></p>
-            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none; width:100%; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeAlert()">Rozumím</button>
+            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none;" onclick="closeAlert()">Rozumím</button>
         </div>
     </div>
 
@@ -220,8 +214,8 @@
             <p>Někdo s tebou sdílel tento seznam děl. Chceš jím přepsat svůj aktuální výběr?</p>
             <div id="sharedBooksList"></div>
             <div class="modal-btn-row">
-                <button class="modal-close" onclick="closeSharedModal()" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-yellow); color: #000; border: none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="acceptSharedList()">Přijmout</button>
+                <button class="modal-close" onclick="closeSharedModal()">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-yellow); color: #000; border: none;" onclick="acceptSharedList()">Přijmout seznam</button>
             </div>
         </div>
     </div>
@@ -256,8 +250,8 @@
             <h3>Vymazat seznam?</h3>
             <p style="text-align: center;">Opravdu chceš smazat všech vybraných děl? Tuto akci nelze vrátit.</p>
             <div class="modal-btn-row">
-                <button class="modal-close" onclick="closeModals()" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-red); color: white; border: none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="confirmClearSelection()">Vymazat vše</button>
+                <button class="modal-close" onclick="closeModals()">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-red); color: white; border: none;" onclick="confirmClearSelection()">Vymazat vše</button>
             </div>
         </div>
     </div>
@@ -270,11 +264,11 @@
     <div class="sidebar" id="sidebarContainer">
         <div class="logo">
             <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" alt="Gymnázium Příbram">
-            <div>GYMNÁZIUM<br><span style="color:#64748b; font-weight:400; font-size:14px;">PŘÍBRAM</span></div>
+            <div>SELEKCE<br><span>ČETBY</span></div>
         </div>
         
         <div class="personal-info-wrapper">
-            <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Údaje pro tisk <span id="infoArrow">▼</span></button>
+            <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Osobní údaje <span id="infoArrow">▼</span></button>
             <div class="personal-info-content" id="personalInfoContent">
                 <input type="text" id="studentName" placeholder="Jméno a příjmení">
                 <input type="text" id="studentClass" placeholder="Třída (např. 4.A)">
@@ -301,7 +295,7 @@
             <button class="btn-modern btn-install" onclick="triggerInstall()">💻 Přidat na plochu</button>
             <button class="btn-modern btn-share" onclick="generateQR()">📲 Sdílet seznam (QR)</button>
             <button class="btn-modern btn-pdf" id="btnPdf" onclick="generatePDF()">🖨 Stáhnout PDF</button>
-            <button class="btn-modern btn-clear" onclick="document.getElementById('clearModal').style.display='flex'">✖ Vymazat vše</button>
+            <button class="btn-modern btn-clear" onclick="showClearModal()">✖ Vymazat vše</button>
         </div>
     </div>
 
@@ -583,22 +577,20 @@
         let pendingSharedIds = [];
         let activeCritFilter = null;
         let activeGenreFilter = null;
-        let windowShareUrl = "";
 
         window.onload = () => {
-            const savedName = localStorage.getItem('studentName');
-            const savedClass = localStorage.getItem('studentClass');
-            const savedYear = localStorage.getItem('schoolYear');
-            if(savedName) document.getElementById('studentName').value = savedName;
-            if(savedClass) document.getElementById('studentClass').value = savedClass;
-            if(savedYear) document.getElementById('schoolYear').value = savedYear;
+            document.getElementById('studentName').value = localStorage.getItem('studentName') || '';
+            document.getElementById('studentClass').value = localStorage.getItem('studentClass') || '';
+            document.getElementById('schoolYear').value = localStorage.getItem('schoolYear') || '';
 
             const saveInfo = () => {
                 localStorage.setItem('studentName', document.getElementById('studentName').value);
                 localStorage.setItem('studentClass', document.getElementById('studentClass').value);
                 localStorage.setItem('schoolYear', document.getElementById('schoolYear').value);
             };
-            ['studentName','studentClass','schoolYear'].forEach(id => document.getElementById(id).addEventListener('input', saveInfo));
+            document.getElementById('studentName').addEventListener('input', saveInfo);
+            document.getElementById('studentClass').addEventListener('input', saveInfo);
+            document.getElementById('schoolYear').addEventListener('input', saveInfo);
 
             try {
                 const savedBooks = localStorage.getItem('selectedBooks');
@@ -620,15 +612,11 @@
                 if (booksParam) {
                     const ids = booksParam.split(',').map(Number);
                     pendingSharedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
+                    
                     if (pendingSharedIds.length > 0) {
-                        const container = document.getElementById('sharedBooksList');
-                        container.innerHTML = '';
-                        pendingSharedIds.forEach((id, index) => {
-                            const book = books.find(b => b.id === id);
-                            container.innerHTML += `<div><strong>${index+1}.</strong> ${book.author} - ${book.title}</div>`;
-                        });
-                        document.getElementById('sharedListModal').style.display = 'flex';
+                        showSharedListModal();
                     }
+                    // Vyčistíme URL od parametru, ať to nestraší
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
             } catch(e) { console.error(e); }
@@ -636,77 +624,304 @@
             updateApp();
         };
 
+        function showSharedListModal() {
+            const container = document.getElementById('sharedBooksList');
+            container.innerHTML = '';
+            pendingSharedIds.forEach((id, index) => {
+                const book = books.find(b => b.id === id);
+                container.innerHTML += `<div><strong>${index + 1}.</strong> ${book.author} - ${book.title}</div>`;
+            });
+            document.getElementById('sharedListModal').style.display = 'flex';
+        }
+
+        function closeSharedModal() {
+            document.getElementById('sharedListModal').style.display = 'none';
+            pendingSharedIds = [];
+        }
+
         function acceptSharedList() {
             selectedIds = [...pendingSharedIds];
-            closeModals();
+            closeSharedModal();
             updateApp();
-            if(window.innerWidth <= 900) switchMobileTab('list');
+            if(window.innerWidth <= 900) { switchMobileTab('list'); }
         }
 
-        function closeModals() {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        function switchMobileTab(tab) {
+            if(tab === 'list') {
+                document.body.classList.add('show-mylist');
+                document.getElementById('navList').classList.add('active');
+                document.getElementById('navBooks').classList.remove('active');
+            } else {
+                document.body.classList.remove('show-mylist');
+                document.getElementById('navBooks').classList.add('active');
+                document.getElementById('navList').classList.remove('active');
+            }
+            scrollToTop();
         }
-
-        function scrollToTop() {
-            document.getElementById('booksContainer').scrollTo({ top: 0, behavior: 'smooth' });
-            document.getElementById('sidebarContainer').scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        window.addEventListener('scroll', (e) => {
-            const btn = document.getElementById('scrollTopBtn');
-            if (e.target.scrollTop > 300) btn.classList.add('visible');
-            else btn.classList.remove('visible');
-        }, true);
 
         function togglePersonalInfo() {
             const content = document.getElementById('personalInfoContent');
+            const arrow = document.getElementById('infoArrow');
             content.classList.toggle('open');
-            document.getElementById('infoArrow').innerText = content.classList.contains('open') ? '▲' : '▼';
+            arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
         }
 
         function renderBooks() {
             const filterText = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('booksContainer');
             container.innerHTML = '';
+
             books.forEach(book => {
                 const matchesText = book.title.toLowerCase().includes(filterText) || book.author.toLowerCase().includes(filterText);
                 const matchesCrit = activeCritFilter === null || book.crit === activeCritFilter;
                 const matchesGenre = activeGenreFilter === null || book.genre === activeGenreFilter;
+
                 if (matchesText && matchesCrit && matchesGenre) {
                     const isSelected = selectedIds.includes(book.id);
                     const card = document.createElement('div');
                     card.className = `book-card ${isSelected ? 'selected' : ''}`;
                     card.onclick = () => toggleBook(book.id);
-                    card.innerHTML = `<div class="check-circle"></div><div class="book-title">${book.title}</div><div class="book-author">${book.author}</div><div class="book-crit">${book.critName}</div><div class="book-genre">${book.genre}</div>`;
+                    
+                    card.innerHTML = `
+                        <div class="check-circle"></div>
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">${book.author}</div>
+                        <div class="book-crit">${book.critName}</div>
+                        <div class="book-genre">${book.genre}</div>
+                    `;
                     container.appendChild(card);
                 }
             });
         }
 
-        function toggleBook(id) {
-            if (selectedIds.includes(id)) selectedIds = selectedIds.filter(bid => bid !== id);
-            else if (selectedIds.length < 20) selectedIds.push(id);
-            else showAlert("Už máš 20 děl! Pro přidání jiného musíš nějaké smazat.");
-            updateApp();
-        }
-
-        function confirmClearSelection() {
-            selectedIds = [];
-            closeModals();
-            updateApp();
-        }
-
         function toggleCritFilter(critId) { activeCritFilter = activeCritFilter === critId ? null : critId; updateApp(); }
         function toggleGenreFilter(genre) { activeGenreFilter = activeGenreFilter === genre ? null : genre; updateApp(); }
+
+        function toggleBook(id) {
+            if (selectedIds.includes(id)) {
+                selectedIds = selectedIds.filter(bookId => bookId !== id);
+            } else {
+                if (selectedIds.length >= 20) {
+                    showAlert("Už máš vybráno 20 děl! Pro přidání jiného musíš nějaké smazat.");
+                    return;
+                }
+
+                const bookToAdd = books.find(b => b.id === id);
+                
+                if (bookToAdd.author !== "Neznámý") {
+                    const sameAuthorBooks = selectedIds.map(sid => books.find(b => b.id === sid)).filter(b => b.author === bookToAdd.author);
+
+                    if (sameAuthorBooks.length > 0) {
+                        if (bookToAdd.author === "Čapek, K.") {
+                            if (sameAuthorBooks.length >= 2) {
+                                showAlert("Od Karla Čapka můžeš mít maximálně 2 díla (1 prózu a 1 drama).");
+                                return;
+                            }
+                            if (sameAuthorBooks[0].genre === bookToAdd.genre) {
+                                showAlert(`Od Karla Čapka už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (próza/drama).`);
+                                return;
+                            }
+                        } else if (bookToAdd.author === "Shakespeare, W.") {
+                            if (sameAuthorBooks.length >= 2) {
+                                showAlert("Od Williama Shakespeara můžeš mít maximálně 2 díla (1 poezii a 1 drama).");
+                                return;
+                            }
+                            if (sameAuthorBooks[0].genre === bookToAdd.genre) {
+                                showAlert(`Od W. Shakespeara už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (poezie/drama).`);
+                                return;
+                            }
+                        } else {
+                            showAlert(`Od autora ${bookToAdd.author} už máš vybrané dílo. Podle pravidel smíš mít od jednoho autora max. 1 knihu (s výjimkou K. Čapka a W. Shakespeara).`);
+                            return;
+                        }
+                    }
+                }
+                
+                selectedIds.push(id);
+            }
+            updateApp();
+        }
+
         function removeBook(id) { selectedIds = selectedIds.filter(bookId => bookId !== id); updateApp(); }
+        function showClearModal() { if(selectedIds.length > 0) { document.getElementById('clearModal').style.display = 'flex'; } }
+        function confirmClearSelection() { selectedIds = []; closeModals(); updateApp(); }
+
+        function checkMaturitaRules() {
+            if (selectedIds.length !== 20) {
+                showAlert("Musíš mít vybráno přesně 20 knih!", "Nesplněno pravidlo");
+                return false;
+            }
+
+            let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+            let genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
+
+            selectedIds.forEach(id => {
+                const book = books.find(b => b.id === id);
+                counts[book.crit]++;
+                genreCounts[book.genre]++;
+            });
+
+            if (counts[1] < 2) { showAlert("Do konce 18. století musíš mít min. 2 díla.", "Chybí období"); return false; }
+            if (counts[2] < 3) { showAlert("Pro 19. století musíš mít min. 3 díla.", "Chybí období"); return false; }
+            if (counts[3] < 4) { showAlert("Pro Světovou literaturu 20./21. st. musíš mít min. 4 díla.", "Chybí období"); return false; }
+            if (counts[4] < 5) { showAlert("Pro Českou literaturu 20./21. st. musíš mít min. 5 děl.", "Chybí období"); return false; }
+
+            if (genreCounts['próza'] < 2) { showAlert("V seznamu musí být minimálně 2 prózy.", "Chybí literární druh"); return false; }
+            if (genreCounts['poezie'] < 2) { showAlert("V seznamu musí být minimálně 2 poezie.", "Chybí literární druh"); return false; }
+            if (genreCounts['drama'] < 2) { showAlert("V seznamu musí být minimálně 2 dramata.", "Chybí literární druh"); return false; }
+
+            return true;
+        }
+
+        function copyShareLink() {
+            if (windowShareUrl) {
+                navigator.clipboard.writeText(windowShareUrl).then(() => {
+                    const btn = document.getElementById('copyLinkBtn');
+                    const originalText = btn.innerText;
+                    btn.innerText = "✓ Odkaz zkopírován";
+                    btn.style.backgroundColor = "var(--accent-green)";
+                    btn.style.color = "white";
+                    setTimeout(() => {
+                        btn.innerText = "🔗 Zkopírovat odkaz";
+                        btn.style.backgroundColor = "var(--bg-hover)";
+                        btn.style.color = "var(--text-main)";
+                    }, 2000);
+                });
+            }
+        }
+
+        function generateQR() {
+            if (!checkMaturitaRules()) return;
+            
+            const currentUrl = window.location.href.split(/[?#]/)[0];
+            const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
+            
+            windowShareUrl = shareUrl; // Uložit pro kopírování
+
+            document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
+
+            document.getElementById('qrModal').style.display = 'flex';
+
+            setTimeout(() => {
+                try {
+                    const canvas = document.getElementById('qrCanvas');
+                    const qr = new QRious({
+                        element: canvas,
+                        value: shareUrl,
+                        size: 200,
+                        background: 'white',
+                        foreground: 'black',
+                        level: 'L'
+                    });
+                } catch(e) {
+                    console.error("QR Error", e);
+                }
+            }, 100);
+        }
+
+        function generatePDF() {
+            if (!checkMaturitaRules()) return;
+
+            const sName = document.getElementById('studentName').value;
+            const sClass = document.getElementById('studentClass').value;
+            const sYear = document.getElementById('schoolYear').value;
+
+            let printHTML = `
+                <div style="background-color: #ffffff !important; color: #000000 !important; width: 210mm; min-height: 297mm; padding: 20mm; box-sizing: border-box; font-family: Arial, sans-serif;">
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                        <tr>
+                            <td style="width: 60px; vertical-align: top; text-align: left;">
+                                <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" style="width: 50px; height: auto; display: block; margin-top: 10px;" alt="Logo Gymnázia">
+                            </td>
+                            <td style="vertical-align: middle; padding-bottom: 10px; padding-left: 10px;">
+                                <div style="text-align: center; font-size: 8pt; color: #000000 !important; margin-bottom: 2px;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
+                                <div style="border-bottom: 1px solid #000000 !important; width: 100%;"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <div style="text-align: center; margin-bottom: 40px; color: #000000 !important;">
+                        <h1 style="font-size: 26pt; font-weight: normal; margin: 0 0 20px 0; font-family: Arial, sans-serif;">SEZNAM ČETBY</h1>
+                        <h2 style="font-size: 11pt; font-weight: normal; margin: 0; line-height: 1.5; font-family: Arial, sans-serif;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</h2>
+                    </div>
+                    
+                    <table style="width: 100%; font-size: 10pt; margin-bottom: 20px; color: #000000 !important; border-collapse: collapse; font-family: Arial, sans-serif;">
+                        <tr>
+                            <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno:</td>
+                            <td style="border-bottom: 1px solid #000000 !important; text-align: center; width: 40%;">${sName || ''}</td>
+                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 20px;">Třída:</td>
+                            <td style="width: 15%; border-bottom: 1px solid #000000 !important; text-align: center;">${sClass || ''}</td>
+                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 20px;">Školní rok:</td>
+                            <td style="width: 25%; border-bottom: 1px solid #000000 !important; text-align: center;">${sYear || ''}</td>
+                        </tr>
+                    </table>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; color: #000000 !important; font-family: Arial, sans-serif; border: 2px solid #000000 !important;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #000000 !important; padding: 8px 10px; width: 1%; white-space: nowrap; text-align: left; font-weight: normal;">Číslo otázky</th>
+                                <th style="border: 1px solid #000000 !important; padding: 8px 10px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
+                                <th style="border: 1px solid #000000 !important; padding: 8px 10px; width: auto; text-align: left; font-weight: normal;">Dílo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            for (let i = 0; i < 20; i++) {
+                const book = books.find(b => b.id === selectedIds[i]);
+                printHTML += `
+                            <tr>
+                                <td style="border: 1px solid #000000 !important; padding: 6px 10px; text-align: center;"><b>${i + 1}</b></td>
+                                <td style="border: 1px solid #000000 !important; padding: 6px 10px;">${book.author}</td>
+                                <td style="border: 1px solid #000000 !important; padding: 6px 10px;">${book.title}</td>
+                            </tr>
+                `;
+            }
+
+            printHTML += `
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 50px; float: right; width: 250px; text-align: center; font-size: 9pt; color: #000000 !important; font-family: Arial, sans-serif;">
+                        <div style="border-bottom: 1px solid #000000 !important; margin-bottom: 5px; width: 100%;"></div>
+                        podpis studenta
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            `;
+
+            if (typeof html2pdf !== 'undefined') {
+                const container = document.createElement('div');
+                container.innerHTML = printHTML;
+                const pdfName = sName ? `Seznam_cetby_${sName.replace(/\s+/g, '_')}.pdf` : 'Maturitni_seznam_cetby.pdf';
+                
+                const opt = { 
+                    margin: 0, 
+                    filename: pdfName, 
+                    image: { type: 'jpeg', quality: 1 }, 
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, 
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+                };
+                
+                const btn = document.getElementById('btnPdf');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '⏳ Generuji PDF...';
+                html2pdf().set(opt).from(container).save().then(() => { btn.innerHTML = originalText; });
+            } else {
+                document.getElementById('printArea').innerHTML = printHTML;
+                window.print();
+            }
+        }
 
         function updateApp() {
             localStorage.setItem('selectedBooks', JSON.stringify(selectedIds));
+
             renderBooks();
             
             const totalCountEl = document.getElementById('totalCount');
             totalCountEl.innerText = `${selectedIds.length} / 20`;
-            totalCountEl.style.color = selectedIds.length === 20 ? 'var(--accent-yellow)' : 'white';
+            totalCountEl.style.color = selectedIds.length === 20 ? 'white' : 'white';
             
             const mobileBadge = document.getElementById('mobileBadge');
             mobileBadge.innerText = `${selectedIds.length}/20`;
@@ -722,53 +937,6 @@
 
             let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
             let genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
-            selectedIds.forEach(id => {
-                const b = books.find(x => x.id === id);
-                if(b) { counts[b.crit]++; genreCounts[b.genre]++; }
-            });
-
-            document.getElementById('criteriaList').innerHTML = [1,2,3,4].map(c => {
-                const names = ["","Do 18. st. (min 2)","19. století (min 3)","Světová 20./21. st. (min 4)","Česká 20./21. st. (min 5)"];
-                const mins = [0,2,3,4,5];
-                return `<button class="crit-btn ${activeCritFilter===c?'active-filter':''}" onclick="toggleCritFilter(${c})"><span>${names[c]}</span><span class="count ${counts[c]>=mins[c]?'met':'unmet'}">${counts[c]}/${mins[c]}</span></button>`;
-            }).join('');
-
-            document.getElementById('genreList').innerHTML = ['próza','poezie','drama'].map(g => {
-                return `<button class="crit-btn ${activeGenreFilter===g?'active-filter':''}" onclick="toggleGenreFilter('${g}')"><span>${g.charAt(0).toUpperCase()+g.slice(1)} (min 2)</span><span class="count ${genreCounts[g]>=2?'met':'unmet'}">${genreCounts[g]}/2</span></button>`;
-            }).join('');
-
-            const selList = document.getElementById('selectedList');
-            selList.innerHTML = '';
-            selectedIds.forEach(id => {
-                const b = books.find(x => x.id === id);
-                if(b) selList.innerHTML += `<div class="selected-item"><div class="selected-item-info"><strong>${b.title}</strong><span class="selected-item-author">${b.author}</span></div><button class="btn-remove" onclick="removeBook(${b.id})">✖</button></div>`;
-            });
-        }
-
-        function generateQR() {
-            if (!checkMaturitaRules()) return;
-            const currentUrl = window.location.href.split(/[?#]/)[0];
-            windowShareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
-            document.getElementById('qrModal').style.display = 'flex';
-            setTimeout(() => { new QRious({ element: document.getElementById('qrCanvas'), value: windowShareUrl, size: 200 }); }, 100);
-        }
-
-        function copyShareLink() {
-            navigator.clipboard.writeText(windowShareUrl).then(() => {
-                const btn = document.getElementById('copyLinkBtn');
-                btn.innerText = "✓ Zkopírováno";
-                setTimeout(() => btn.innerText = "🔗 Zkopírovat odkaz", 2000);
-            });
-        }
-
-        function checkMaturitaRules() {
-            if (selectedIds.length !== 20) {
-                showAlert("Musíš mít vybráno přesně 20 knih!");
-                return false;
-            }
-
-            let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
-            let genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
 
             selectedIds.forEach(id => {
                 const book = books.find(b => b.id === id);
@@ -776,93 +944,51 @@
                 genreCounts[book.genre]++;
             });
 
-            if (counts[1] < 2) { showAlert("Do konce 18. století musíš mít min. 2 díla."); return false; }
-            if (counts[2] < 3) { showAlert("Pro 19. století musíš mít min. 3 díla."); return false; }
-            if (counts[3] < 4) { showAlert("Pro Světovou literaturu 20./21. st. musíš mít min. 4 díla."); return false; }
-            if (counts[4] < 5) { showAlert("Pro Českou literaturu 20./21. st. musíš mít min. 5 děl."); return false; }
+            const criteriaList = document.getElementById('criteriaList');
+            criteriaList.innerHTML = `
+                <button class="crit-btn ${activeCritFilter === 1 ? 'active-filter' : ''}" onclick="toggleCritFilter(1)">
+                    <span>Do 18. st. (min 2)</span><span class="count ${counts[1] >= 2 ? 'met' : 'unmet'}">${counts[1]}/2</span>
+                </button>
+                <button class="crit-btn ${activeCritFilter === 2 ? 'active-filter' : ''}" onclick="toggleCritFilter(2)">
+                    <span>19. století (min 3)</span><span class="count ${counts[2] >= 3 ? 'met' : 'unmet'}">${counts[2]}/3</span>
+                </button>
+                <button class="crit-btn ${activeCritFilter === 3 ? 'active-filter' : ''}" onclick="toggleCritFilter(3)">
+                    <span>Světová 20./21. st. (min 4)</span><span class="count ${counts[3] >= 4 ? 'met' : 'unmet'}">${counts[3]}/4</span>
+                </button>
+                <button class="crit-btn ${activeCritFilter === 4 ? 'active-filter' : ''}" onclick="toggleCritFilter(4)">
+                    <span>Česká 20./21. st. (min 5)</span><span class="count ${counts[4] >= 5 ? 'met' : 'unmet'}">${counts[4]}/5</span>
+                </button>
+            `;
 
-            if (genreCounts['próza'] < 2) { showAlert("V seznamu musí být minimálně 2 prózy."); return false; }
-            if (genreCounts['poezie'] < 2) { showAlert("V seznamu musí být minimálně 2 poezie."); return false; }
-            if (genreCounts['drama'] < 2) { showAlert("V seznamu musí být minimálně 2 dramata."); return false; }
+            const genreList = document.getElementById('genreList');
+            genreList.innerHTML = `
+                <button class="crit-btn ${activeGenreFilter === 'próza' ? 'active-filter' : ''}" onclick="toggleGenreFilter('próza')">
+                    <span>Próza (min 2)</span><span class="count ${genreCounts['próza'] >= 2 ? 'met' : 'unmet'}">${genreCounts['próza']}/2</span>
+                </button>
+                <button class="crit-btn ${activeGenreFilter === 'poezie' ? 'active-filter' : ''}" onclick="toggleGenreFilter('poezie')">
+                    <span>Poezie (min 2)</span><span class="count ${genreCounts['poezie'] >= 2 ? 'met' : 'unmet'}">${genreCounts['poezie']}/2</span>
+                </button>
+                <button class="crit-btn ${activeGenreFilter === 'drama' ? 'active-filter' : ''}" onclick="toggleGenreFilter('drama')">
+                    <span>Drama (min 2)</span><span class="count ${genreCounts['drama'] >= 2 ? 'met' : 'unmet'}">${genreCounts['drama']}/2</span>
+                </button>
+            `;
 
-            return true;
-        }
-
-        function generatePDF() {
-            if (!checkMaturitaRules()) return;
-            const sName = document.getElementById('studentName').value || "";
-            const sClass = document.getElementById('studentClass').value || "";
-            const sYear = document.getElementById('schoolYear').value || "";
-
-            let printHTML = `
-                <div style="padding: 10mm 15mm; font-family: Arial, sans-serif; color: black; background: white; width: 210mm; height: 296mm; box-sizing: border-box; overflow: hidden; position: relative;">
-                    
-                    <div style="position: relative; margin-bottom: 25px; height: 45px;">
-                        <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" style="height: 45px; position: absolute; left: 0; top: 0;">
-                        <div style="margin-left: 65px; border-bottom: 1.2px solid black; padding-top: 20px; padding-bottom: 4px; text-align: center;">
-                            <span style="font-size: 8.5pt; font-weight: normal; text-transform: uppercase;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</span>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="font-size: 28pt; font-weight: normal; margin: 0 0 10px 0; font-family: Arial, sans-serif;">SEZNAM ČETBY</h1>
-                        <div style="font-size: 11pt; font-weight: normal; margin: 0; line-height: 1.4;">
-                            K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY
-                        </div>
-                    </div>
-
-                    <table style="width: 100%; font-size: 10pt; margin-bottom: 15px; border-collapse: collapse;">
-                        <tr>
-                            <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno:</td>
-                            <td style="border-bottom: 1px solid black; width: 45%; padding: 0 5px; text-align: center;">${sName}</td>
-                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 15px;">Třída:</td>
-                            <td style="border-bottom: 1px solid black; width: 20%; padding: 0 5px; text-align: center;">${sClass}</td>
-                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 15px;">Školní rok:</td>
-                            <td style="border-bottom: 1px solid black; width: 30%; padding: 0 5px; text-align: center;">${sYear}</td>
-                        </tr>
-                    </table>
-
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10.5pt; border: 1.5px solid black;">
-                        <thead>
-                            <tr>
-                                <th style="border: 1px solid black; padding: 6px; width: 15%; text-align: left; font-weight: normal;">Číslo otázky</th>
-                                <th style="border: 1px solid black; padding: 6px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
-                                <th style="border: 1px solid black; padding: 6px; width: 50%; text-align: left; font-weight: normal;">Dílo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${selectedIds.map((id, i) => {
-                                const b = books.find(x => x.id === id);
-                                return \`<tr>
-                                    <td style="border: 1px solid black; padding: 5px 10px; text-align: center; font-weight: bold;">\${i+1}</td>
-                                    <td style="border: 1px solid black; padding: 5px 10px;">\${b.author}</td>
-                                    <td style="border: 1px solid black; padding: 5px 10px;">\${b.title}</td>
-                                </tr>\`;
-                            }).join('')}
-                        </tbody>
-                    </table>
-
-                    <div style="position: absolute; bottom: 15mm; right: 15mm; width: 250px; text-align: center; font-size: 9pt;">
-                        <div style="border-top: 1px solid black; margin-bottom: 5px;"></div>
-                        podpis studenta
-                    </div>
-                </div>`;
-
-            const opt = { 
-                margin: 0, filename: 'Seznam_cetby.pdf', image: { type: 'jpeg', quality: 1 }, 
-                html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-            };
+            const selectedList = document.getElementById('selectedList');
+            selectedList.innerHTML = '';
             
-            const btn = document.getElementById('btnPdf');
-            btn.innerText = "⏳ Generuji...";
-            html2pdf().set(opt).from(printHTML).save().then(() => btn.innerText = "🖨 Stáhnout PDF");
-        }
-
-        function switchMobileTab(t) {
-            document.body.classList.toggle('show-mylist', t === 'list');
-            document.getElementById('navBooks').classList.toggle('active', t === 'books');
-            document.getElementById('navList').classList.toggle('active', t === 'list');
-            scrollToTop();
+            selectedIds.forEach(id => {
+                const book = books.find(b => b.id === id);
+                const item = document.createElement('div');
+                item.className = 'selected-item';
+                item.innerHTML = `
+                    <div class="selected-item-info">
+                        <strong>${book.title}</strong>
+                        <span class="selected-item-author">${book.author}</span>
+                    </div>
+                    <button class="btn-remove" onclick="removeBook(${book.id})">✖</button>
+                `;
+                selectedList.appendChild(item);
+            });
         }
     </script>
 </body>
