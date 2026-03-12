@@ -33,14 +33,7 @@
 
         body { margin: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; user-select: none; }
 
-        .print-only { display: none; }
-        @media print {
-            @page { margin: 0; }
-            body { background: white; color: black; display: block; height: auto; overflow: visible; user-select: auto; }
-            .sidebar, .main-content, .modal-overlay, .mobile-nav, #scrollTopBtn { display: none !important; }
-            .print-only { display: block !important; }
-        }
-
+        /* Sidebar & Layout */
         .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px; box-sizing: border-box; overflow-y: auto; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.03); scroll-behavior: smooth; }
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
         .mobile-nav { display: none; }
@@ -80,11 +73,11 @@
 
         .action-btns { display: flex; flex-direction: column; gap: 10px; }
         .btn-modern { width: 100%; padding: 14px; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-install { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); }
         .btn-pdf { background-color: var(--accent-yellow); color: black; box-shadow: 0 4px 10px rgba(250, 204, 21, 0.2); }
         .btn-share { background-color: var(--accent-dark); color: white; }
         .btn-clear { background-color: transparent; color: var(--accent-red); border: 1px dashed rgba(220, 38, 38, 0.4); }
 
+        /* Search & Books */
         .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; }
         .search-bar input { width: 100%; padding: 16px 20px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius); font-size: 15px; box-sizing: border-box; outline: none; transition: var(--transition); }
         .search-bar input:focus { border-color: var(--accent-dark); background: #ffffff; }
@@ -99,9 +92,9 @@
         .book-card.selected .check-circle { background: var(--accent-yellow); border-color: var(--accent-yellow); }
         .book-card.selected .check-circle::after { color: #000; }
 
+        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(3px); }
         .modal-content { background: var(--bg-panel); padding: 30px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-
         #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; border: 1px solid var(--border-color); }
         .share-link-btn { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); cursor: pointer; font-weight: bold; transition: var(--transition); margin-bottom: 15px; font-size: 13px; }
 
@@ -132,14 +125,13 @@
 </head>
 <body>
 
-    <div id="printArea" class="print-only"></div>
     <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 
     <div class="modal-overlay" id="alertModal" style="z-index: 200;">
         <div class="modal-content">
             <h3 id="alertTitle">Upozornění</h3>
             <p id="alertMessage"></p>
-            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none; width:100%;" onclick="closeAlert()">Rozumím</button>
+            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none; width:100%; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeAlert()">Rozumím</button>
         </div>
     </div>
 
@@ -149,8 +141,8 @@
             <p>Chceš přepsat svůj výběr tímto sdíleným seznamem?</p>
             <div id="sharedBooksList" style="text-align:left; max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; margin-bottom:15px; font-size:12px;"></div>
             <div style="display:flex; gap:10px;">
-                <button class="modal-close" onclick="closeModals()" style="flex:1;">Zrušit</button>
-                <button class="modal-close" style="background: var(--accent-yellow); color:black; border:none; flex:1;" onclick="acceptSharedList()">Přijmout</button>
+                <button class="modal-close" onclick="closeModals()" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-yellow); color:black; border:none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="acceptSharedList()">Přijmout</button>
             </div>
         </div>
     </div>
@@ -160,7 +152,7 @@
             <h3>Sdílet seznam</h3>
             <div id="qrCodeContainer"><canvas id="qrCanvas"></canvas></div>
             <button id="copyLinkBtn" class="share-link-btn" onclick="copyShareLink()">🔗 Zkopírovat odkaz</button>
-            <button class="modal-close" style="width:100%;" onclick="closeModals()">Zavřít</button>
+            <button class="modal-close" style="width:100%; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeModals()">Zavřít</button>
         </div>
     </div>
 
@@ -201,8 +193,8 @@
     <div class="modal-overlay" id="clearModal">
         <div class="modal-content">
             <h3>Smazat vše?</h3><p>Opravdu chceš vymazat celý svůj výběr?</p>
-            <div style="display:flex; gap:10px;"><button class="modal-close" style="flex:1;" onclick="closeModals()">Ne</button>
-            <button class="modal-close" style="background:var(--accent-red); color:white; border:none; flex:1;" onclick="confirmClearSelection()">Smazat</button></div>
+            <div style="display:flex; gap:10px;"><button class="modal-close" style="flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="closeModals()">Ne</button>
+            <button class="modal-close" style="background:var(--accent-red); color:white; border:none; flex:1; padding:10px; border-radius:4px; cursor:pointer;" onclick="confirmClearSelection()">Smazat</button></div>
         </div>
     </div>
 
@@ -571,54 +563,77 @@
         }
 
         function generatePDF() {
-            const sName = document.getElementById('studentName').value;
-            const sClass = document.getElementById('studentClass').value;
-            const sYear = document.getElementById('schoolYear').value;
+            const sName = document.getElementById('studentName').value || "....................................................";
+            const sClass = document.getElementById('studentClass').value || "................";
+            const sYear = document.getElementById('schoolYear').value || "................";
 
             let printHTML = `
-                <div style="padding: 15mm; font-family: Arial, sans-serif; color: black; line-height: 1.2;">
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                <div style="padding: 15mm; font-family: 'Arial', sans-serif; color: black; background: white;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         <tr>
                             <td style="width: 50px;"><img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" style="width: 45px;"></td>
-                            <td style="vertical-align: middle; border-bottom: 1px solid black; text-align: center; font-size: 9pt;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</td>
+                            <td style="vertical-align: middle; border-bottom: 2px solid black; text-align: center; font-size: 10pt; font-weight: bold; text-transform: uppercase;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</td>
                         </tr>
                     </table>
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h1 style="font-size: 22pt; margin: 0;">SEZNAM ČETBY</h1>
-                        <p style="font-size: 9pt; margin: 5px 0;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</p>
+                    
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h1 style="font-size: 24pt; margin: 0; font-weight: bold;">SEZNAM ČETBY</h1>
+                        <p style="font-size: 10pt; margin: 5px 0;">K ústní zkoušce z českého jazyka a literatury společné části maturitní zkoušky</p>
                     </div>
-                    <table style="width: 100%; font-size: 10pt; margin-bottom: 15px;">
+
+                    <table style="width: 100%; font-size: 11pt; margin-bottom: 20px; border-collapse: collapse;">
                         <tr>
-                            <td>Jméno: <span style="border-bottom: 1px solid black; display:inline-block; width: 200px; text-align:center;">${sName}</span></td>
-                            <td>Třída: <span style="border-bottom: 1px solid black; display:inline-block; width: 60px; text-align:center;">${sClass}</span></td>
-                            <td>Rok: <span style="border-bottom: 1px solid black; display:inline-block; width: 100px; text-align:center;">${sYear}</span></td>
+                            <td style="padding: 5px 0;"><strong>Jméno a příjmení:</strong> ${sName}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px 0;"><strong>Třída:</strong> ${sClass} <span style="margin-left: 30px;"><strong>Školní rok:</strong> ${sYear}</span></td>
                         </tr>
                     </table>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 9pt; border: 1.5px solid black;">
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt;">
                         <thead>
-                            <tr style="background: #eee;">
-                                <th style="border: 1px solid black; padding: 4px; width: 40px;">Otázka</th>
-                                <th style="border: 1px solid black; padding: 4px; text-align:left;">Autor</th>
-                                <th style="border: 1px solid black; padding: 4px; text-align:left;">Dílo</th>
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="border: 1px solid black; padding: 6px; width: 35px; text-align: center;">Č.</th>
+                                <th style="border: 1px solid black; padding: 6px; text-align: left;">Autor</th>
+                                <th style="border: 1px solid black; padding: 6px; text-align: left;">Dílo</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${Array.from({length: 20}).map((_, i) => {
                                 const b = books.find(x => x.id === selectedIds[i]) || {author:"", title:""};
-                                return `<tr><td style="border: 1px solid black; padding: 4px; text-align:center; font-weight:bold;">${i+1}</td><td style="border: 1px solid black; padding: 4px;">${b.author}</td><td style="border: 1px solid black; padding: 4px;">${b.title}</td></tr>`;
+                                return `
+                                <tr style="height: 24px;">
+                                    <td style="border: 1px solid black; padding: 4px; text-align: center; font-weight: bold;">${i+1}</td>
+                                    <td style="border: 1px solid black; padding: 4px;">${b.author}</td>
+                                    <td style="border: 1px solid black; padding: 4px;">${b.title}</td>
+                                </tr>`;
                             }).join('')}
                         </tbody>
                     </table>
-                    <div style="margin-top: 30px; float: right; width: 200px; text-align: center; font-size: 8pt;">
-                        <div style="border-top: 1px solid black; margin-bottom: 5px;"></div>podpis studenta
+
+                    <div style="margin-top: 40px; width: 100%; font-size: 10pt;">
+                        <div style="float: left;">V Příbrami dne ...........................</div>
+                        <div style="float: right; text-align: center; width: 200px;">
+                            <div style="border-top: 1px solid black; margin-bottom: 3px;"></div>
+                            podpis studenta
+                        </div>
+                        <div style="clear: both;"></div>
                     </div>
                 </div>`;
 
-            const opt = { margin: 0, filename: 'Seznam_cetby.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
+            const opt = {
+                margin: 0,
+                filename: 'Seznam_cetby.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
             html2pdf().set(opt).from(printHTML).save();
         }
 
         function showAlert(m) { document.getElementById('alertMessage').innerText = m; document.getElementById('alertModal').style.display = 'flex'; }
+        function closeAlert() { document.getElementById('alertModal').style.display = 'none'; }
         function confirmClearSelection() { selectedIds = []; closeModals(); updateApp(); }
         function switchMobileTab(t) {
             document.body.classList.toggle('show-mylist', t === 'list');
