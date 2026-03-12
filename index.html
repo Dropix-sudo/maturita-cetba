@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
-    
+
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23333333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-size='300' font-weight='bold' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 
@@ -16,359 +16,362 @@
     <title>Selekce Četby | Gymnázium Příbram</title>
     <style>
         :root {
-            --bg-main: #f8fafc; --bg-panel: #ffffff; --bg-card: #ffffff; --bg-hover: #f1f5f9;
-            --text-main: #1e293b; --text-muted: #64748b;
-            --accent-yellow: #facc15; --accent-dark: #1e293b; --accent-red: #ef4444; --accent-green: #22c55e;
-            --border-color: #e2e8f0; --radius: 12px; --transition: all 0.2s ease;
+            --bg-main: #f5f5f5; 
+            --bg-panel: #ffffff; 
+            --bg-card: #ffffff; 
+            --bg-hover: #f0f0f0;
+            --text-main: #222222; 
+            --text-muted: #666666;
+            --accent-green: #16a34a; 
+            --accent-red: #dc2626; 
+            --accent-yellow: #facc15; 
+            --accent-dark: #333333; 
+            --border-color: #dddddd; 
+            --radius: 8px; 
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cccccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaaaaa; }
 
-        .sidebar { width: 340px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; overflow-y: auto; z-index: 10; }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
-        .mobile-nav { display: none; }
+        body { margin: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; user-select: none; }
 
-        .logo { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 800; margin-bottom: 25px; color: var(--accent-dark); }
-        .logo img { width: 40px; height: auto; }
-
-        .personal-info-wrapper { margin-bottom: 20px; }
-        .btn-toggle-info { width: 100%; background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius); cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; }
-        .personal-info-content { display: none; flex-direction: column; gap: 8px; margin-top: 10px; background: var(--bg-main); padding: 15px; border-radius: var(--radius); }
+        .print-only { display: none; }
+        @media print {
+            @page { margin: 1cm; }
+            @page { margin: 0; }
+            body { background: white; color: black; display: block; height: auto; overflow: visible; user-select: auto; }
+            .sidebar, .main-content, .modal-overlay, .mobile-nav, #scrollTopBtn { display: none !important; }
+            .print-only { display: block !important; }
+@@ -61,8 +56,6 @@
         .personal-info-content.open { display: flex; }
-        .personal-info-content input { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); outline: none; }
+        .personal-info-content input { padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); outline: none; font-size: 13px; transition: var(--transition); }
+        .personal-info-content input:focus { border-color: var(--accent-dark); }
+        .disclaimer-text { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 5px; padding-top: 10px; border-top: 1px dashed var(--border-color); line-height: 1.4; }
+        .disclaimer-text span { color: var(--accent-dark); font-weight: bold; }
 
-        .status-box { background: var(--accent-dark); padding: 20px; border-radius: var(--radius); margin-bottom: 20px; text-align: center; color: white; }
-        .status-total { font-size: 26px; font-weight: 800; color: var(--accent-yellow); }
+        .status-box { background: var(--accent-dark); border: none; padding: 20px; border-radius: var(--radius); margin-bottom: 24px; text-align: center; color: white; }
+        .status-label { font-size: 12px; color: rgba(255,255,255,0.7); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+@@ -88,15 +81,11 @@
+        .action-btns { display: flex; flex-direction: column; gap: 10px; }
+        .btn-modern { width: 100%; padding: 14px; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-install { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-install:hover { background-color: #e5e5e5; }
+        .btn-pdf { background-color: var(--accent-yellow); color: black; box-shadow: 0 4px 10px rgba(250, 204, 21, 0.2); }
+        .btn-pdf:hover { background-color: #eab308; transform: translateY(-2px); }
+        .btn-share { background-color: var(--accent-dark); color: white; }
+        .btn-share:hover { background-color: #111111; transform: translateY(-2px); }
+        .btn-clear { background-color: transparent; color: var(--accent-red); border: 1px dashed rgba(220, 38, 38, 0.4); }
+        .btn-clear:hover { background-color: rgba(220, 38, 38, 0.05); border-style: solid; }
 
-        .section-header { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; color: var(--text-muted); }
-        .criteria-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
-        .crit-btn { display: flex; justify-content: space-between; background: #fff; border: 1px solid var(--border-color); padding: 10px 14px; border-radius: var(--radius); cursor: pointer; font-size: 13px; transition: var(--transition); }
-        .crit-btn.active-filter { border-color: var(--accent-dark); background: #f8fafc; }
-        .crit-btn .count.met { color: var(--accent-green); font-weight: bold; }
-        .crit-btn .count.unmet { color: var(--accent-red); }
+        .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .search-bar { padding: 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; }
+        .search-bar input { width: 100%; padding: 16px 20px; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius); font-size: 15px; box-sizing: border-box; outline: none; transition: var(--transition); }
+        .search-bar input:focus { border-color: var(--accent-dark); background: #ffffff; }
 
-        .selected-books { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
-        .selected-item { background: #fff; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 12px; }
-        .btn-remove { background: #fee2e2; border: none; color: var(--accent-red); width: 24px; height: 24px; border-radius: 4px; cursor: pointer; }
-
-        .action-btns { display: flex; flex-direction: column; gap: 8px; }
-        .btn-modern { width: 100%; padding: 12px; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-pdf { background-color: var(--accent-yellow); color: #000; }
-        .btn-share { background-color: var(--accent-dark); color: #fff; }
-
-        .search-bar { padding: 20px; background: #fff; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; }
-        .search-bar input { width: 100%; padding: 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius); outline: none; }
-
-        .books-container { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
-        .book-card { display: grid; grid-template-columns: 30px 1fr 1fr 140px 90px; align-items: center; background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px 16px; cursor: pointer; font-size: 13px; gap: 10px; transition: 0.2s;}
-        .book-card.selected { border-color: var(--accent-dark); background: #f8fafc; }
-        .check-circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; background: white; }
+@@ -110,149 +99,68 @@
         .book-card.selected .check-circle { background: var(--accent-yellow); border-color: var(--accent-yellow); }
-        .book-card.selected .check-circle::after { content: '✓'; color: #000; font-size: 12px; font-weight: bold; }
+        .book-card.selected .check-circle::after { color: #000; }
+
+        .book-title { font-weight: 600; font-size: 15px; color: var(--text-main); }
+        .book-author { color: var(--text-muted); }
+        .book-crit { font-size: 12px; padding: 6px 12px; background: var(--bg-main); border-radius: 20px; text-align: center; color: var(--text-muted); border: 1px solid var(--border-color); }
+        .book-genre { font-size: 12px; padding: 6px 12px; background: #f3f4f6; color: var(--text-muted); border-radius: 20px; text-align: center; text-transform: capitalize; border: 1px solid #e5e7eb; }
+        
+        .book-card.selected .book-crit, .book-card.selected .book-genre { background: #ffffff; border-color: #dddddd; }
+
+        .list-header { display: grid; grid-template-columns: 40px 1fr 1fr 150px 100px; gap: 10px; padding: 0 20px 10px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(3px); }
+        .modal-content { background: var(--bg-panel); padding: 30px; border-radius: var(--radius); max-width: 90%; width: 400px; border: 1px solid var(--border-color); text-align: center; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-content h3 { margin-top: 0; color: var(--text-main); margin-bottom: 15px; font-size: 20px; }
+        .modal-content p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px;}
+        .modal-close { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: var(--transition); }
+        .modal-close:hover { background: #e2e8f0; }
+
+        .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-btn-row button { flex: 1; }
+
+        #qrCodeContainer { background: white; padding: 15px; border-radius: 8px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; width: 200px; height: 200px; border: 1px solid var(--border-color); }
+        
+        .share-link-btn { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); cursor: pointer; font-weight: bold; transition: var(--transition); margin-bottom: 15px; font-size: 13px; }
+        .share-link-btn:hover { background: #e5e5e5; }
+
+        #sharedBooksList { text-align: left; overflow-y: auto; max-height: 250px; margin-bottom: 15px; font-size: 13px; border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; background: var(--bg-main); }
+        #sharedBooksList div { padding: 6px 0; border-bottom: 1px solid #eaeaea; }
+        #sharedBooksList div:last-child { border-bottom: none; }
 
         #scrollTopBtn {
-            position: fixed; bottom: 85px; right: 20px; width: 45px; height: 45px; background: var(--accent-dark); color: var(--accent-yellow); border: none; border-radius: 50%; font-size: 20px; cursor: pointer; opacity: 0; transition: 0.3s; z-index: 60; display: flex; align-items: center; justify-content: center;
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background-color: var(--accent-dark);
+            color: var(--accent-yellow);
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 60;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        #scrollTopBtn.visible { opacity: 1; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(2px); }
-        .modal-content { background: #fff; padding: 25px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; }
+        #scrollTopBtn.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+            position: fixed; bottom: 85px; right: 20px; width: 48px; height: 48px; background-color: var(--accent-dark); color: var(--accent-yellow); border: none; border-radius: 50%; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); z-index: 60; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center;
+        }
+        #scrollTopBtn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
         @media (max-width: 900px) {
-            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #fff; border-top: 1px solid var(--border-color); z-index: 50; }
-            .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; border: none; background: none; color: #64748b; }
-            .mobile-nav-btn.active { color: var(--accent-dark); font-weight: bold; }
-            .mobile-nav-btn .badge { background: var(--accent-yellow); padding: 2px 6px; border-radius: 10px; color: #000; margin-top: 2px; font-size: 10px; }
-            .sidebar { position: absolute; width: 100%; display: none; height: 100vh; padding-bottom: 120px; }
+            body { padding-bottom: 60px; }
+            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--bg-panel); border-top: 1px solid var(--border-color); z-index: 50; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
+            .mobile-nav-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; padding: 5px; }
+            .mobile-nav-btn.active { color: var(--accent-dark); }
+            .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); transition: var(--transition);}
+            .mobile-nav-btn span.badge { display: inline-block; background: var(--bg-main); padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; border: 1px solid var(--border-color); }
+            .mobile-nav-btn.active span.badge { border-color: var(--accent-yellow); background: var(--accent-yellow); color: #000; }
+            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 80px; display: none; }
+            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 60px; display: flex; }
+            .sidebar { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; padding-bottom: 100px; display: none; }
+            .main-content { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; }
+            .books-container, .selected-books { padding-bottom: 120px !important; }
             body.show-mylist .sidebar { display: flex; }
             body.show-mylist .main-content { display: none; }
-            .books-container { padding-bottom: 120px; }
-            .book-card { grid-template-columns: 25px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 12px; }
-            .book-title { grid-area: title; font-weight: 700; }
-            .book-author { grid-area: author; color: #64748b; }
-            .book-crit { grid-area: crit; justify-self: start; font-size: 10px; padding: 4px 8px; background: #f1f5f9; border-radius: 4px; }
-            .book-genre { grid-area: genre; justify-self: end; font-size: 10px; padding: 4px 8px; background: #fef9c3; border-radius: 4px; color: #854d0e; }
+            .search-bar { padding: 15px; }
+            .search-bar input { padding: 12px 15px; font-size: 15px; }
+            .books-container { padding: 15px; gap: 8px; }
+            .list-header { display: none; }
+            .book-card { grid-template-columns: 30px 1fr; grid-template-areas: "check title" "check author" "crit genre"; padding: 14px 15px; gap: 5px; }
+            .check-circle { grid-area: check; align-self: center; }
+            .book-title { grid-area: title; font-size: 14px; line-height: 1.3; }
+            .book-author { grid-area: author; font-size: 12px; margin-top: 2px; }
+            .book-crit { grid-area: crit; justify-self: start; margin-top: 8px; padding: 4px 10px; font-size: 11px; }
+            .book-genre { grid-area: genre; justify-self: end; margin-top: 8px; padding: 4px 10px; font-size: 11px; }
+            .status-box { padding: 15px; margin-bottom: 15px; }
+            .status-total { font-size: 24px; }
+            .logo { font-size: 18px; margin-bottom: 20px; }
+            .book-title { grid-area: title; font-size: 14px; }
+            .book-author { grid-area: author; font-size: 12px; }
+            .book-crit { grid-area: crit; justify-self: start; padding: 4px 10px; font-size: 11px; }
+            .book-genre { grid-area: genre; justify-self: end; padding: 4px 10px; font-size: 11px; }
         }
     </style>
 </head>
 <body>
 
+    <div id="printArea" class="print-only"></div>
+
+    <button id="scrollTopBtn" onclick="scrollToTop()" title="Nahoru">↑</button>
     <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 
-    <div class="modal-overlay" id="alertModal">
+    <div class="modal-overlay" id="alertModal" style="z-index: 200;">
         <div class="modal-content">
             <h3 id="alertTitle">Upozornění</h3>
+            <p id="alertMessage" style="text-align: center; margin-bottom: 20px;"></p>
+            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none;" onclick="closeAlert()">Rozumím</button>
             <p id="alertMessage"></p>
-            <button class="modal-close" style="width:100%; padding:12px; background: var(--accent-dark); color: #fff; border: none; border-radius: 6px;" onclick="document.getElementById('alertModal').style.display='none'">Rozumím</button>
+            <button class="modal-close" style="background: var(--accent-dark); color: white; border: none; width:100%;" onclick="closeAlert()">Rozumím</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="sharedListModal" style="z-index: 150;">
+        <div class="modal-content" style="display: flex; flex-direction: column;">
+            <h3>Sdílený seznam četby</h3>
+            <p>Někdo s tebou sdílel tento seznam děl. Chceš jím přepsat svůj aktuální výběr?</p>
+            <div id="sharedBooksList"></div>
+            <div class="modal-btn-row">
+                <button class="modal-close" onclick="closeSharedModal()">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-yellow); color: #000; border: none;" onclick="acceptSharedList()">Přijmout seznam</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="installModal">
+        <div class="modal-content">
+            <h3>Rychlá instalace</h3>
+            <p>Přidej si aplikaci ručně na plochu pro nejlepší zážitek:</p>
+            <p style="background: var(--bg-main); padding: 10px; border-radius: 8px; text-align: left; border: 1px solid var(--border-color);"><strong>📱 iPhone:</strong><br>Klikni dole na sdílení a vyber <strong>Přidat na plochu</strong>.</p>
+            <p style="background: var(--bg-main); padding: 10px; border-radius: 8px; text-align: left; border: 1px solid var(--border-color);"><strong>💻 Android / PC:</strong><br>V menu prohlížeče (⋮) zvol <strong>Instalovat aplikaci</strong>.</p>
+            <button class="modal-close" onclick="closeModals()">Zavřít</button>
+            <h3>Sdílený seznam</h3>
+            <p>Chceš přepsat svůj výběr tímto sdíleným seznamem?</p>
+            <div id="sharedBooksList" style="text-align:left; max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; margin-bottom:15px; font-size:12px;"></div>
+            <div style="display:flex; gap:10px;">
+                <button class="modal-close" onclick="closeModals()" style="flex:1;">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-yellow); color:black; border:none; flex:1;" onclick="acceptSharedList()">Přijmout</button>
+            </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="qrModal">
         <div class="modal-content">
             <h3>Sdílet seznam</h3>
-            <div id="qrCodeContainer" style="margin: 20px 0;"><canvas id="qrCanvas"></canvas></div>
-            <button id="copyLinkBtn" style="width:100%; padding:12px; margin-bottom:10px; border-radius:6px; border:1px solid #ddd; background:#f9f9f9; cursor:pointer;" onclick="copyShareLink()">🔗 Zkopírovat odkaz</button>
-            <button class="modal-close" style="width:100%; padding:10px; border:none; background:#eee;" onclick="document.getElementById('qrModal').style.display='none'">Zavřít</button>
+            <p id="qrWarning" style="color: #dc2626; font-size: 12px; display: none; margin-top: 0; text-align: center;">Sdílíš lokální odkaz. Aplikace musí být na webu.</p>
+            
+            <div id="qrCodeContainer">
+                <canvas id="qrCanvas"></canvas>
+            </div>
+
+            <div id="qrCodeContainer"><canvas id="qrCanvas"></canvas></div>
+            <button id="copyLinkBtn" class="share-link-btn" onclick="copyShareLink()">🔗 Zkopírovat odkaz</button>
+
+            <button class="modal-close" onclick="closeModals()">Zavřít</button>
         </div>
     </div>
 
-    <div class="mobile-nav">
-        <button class="mobile-nav-btn active" id="navBooks" onclick="switchMobileTab('books')">📚 Nabídka</button>
-        <button class="mobile-nav-btn" id="navList" onclick="switchMobileTab('list')">🎒 Seznam <span class="badge" id="mobileBadge">0/20</span></button>
+    <div class="modal-overlay" id="clearModal">
+        <div class="modal-content">
+            <h3>Vymazat seznam?</h3>
+            <p style="text-align: center;">Opravdu chceš smazat všech vybraných děl? Tuto akci nelze vrátit.</p>
+            <div class="modal-btn-row">
+                <button class="modal-close" onclick="closeModals()">Zrušit</button>
+                <button class="modal-close" style="background: var(--accent-red); color: white; border: none;" onclick="confirmClearSelection()">Vymazat vše</button>
+            </div>
+            <button class="modal-close" style="width:100%;" onclick="closeModals()">Zavřít</button>
+        </div>
     </div>
+
+@@ -263,101 +171,42 @@
 
     <div class="sidebar" id="sidebarContainer">
         <div class="logo">
+            <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" alt="Gymnázium Příbram">
             <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" alt="G">
-            <div>GYMNÁZIUM<br><span style="color:#64748b; font-weight:400; font-size:14px;">PŘÍBRAM</span></div>
+            <div>SELEKCE<br><span>ČETBY</span></div>
         </div>
+        
         <div class="personal-info-wrapper">
-            <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Údaje pro tisk <span id="infoArrow">▼</span></button>
+            <button class="btn-toggle-info" onclick="togglePersonalInfo()">👤 Osobní údaje <span id="infoArrow">▼</span></button>
             <div class="personal-info-content" id="personalInfoContent">
                 <input type="text" id="studentName" placeholder="Jméno a příjmení">
                 <input type="text" id="studentClass" placeholder="Třída (např. 4.A)">
-                <input type="text" id="schoolYear" placeholder="Školní rok (2025/2026)">
+                <input type="text" id="schoolYear" placeholder="Školní rok (např. 2025/2026)">
+                <div class="disclaimer-text">🔒 <span>BEZPEČNÉ:</span> Údaje zůstávají jen ve tvém zařízení.</div>
+                <input type="text" id="studentClass" placeholder="Třída">
+                <input type="text" id="schoolYear" placeholder="Školní rok">
             </div>
         </div>
-        <div class="status-box"><div style="font-size:11px; text-transform:uppercase; opacity:0.8;">Vybráno děl</div><div class="status-total" id="totalCount">0 / 20</div></div>
+        
+        <div class="status-box">
+            <div class="status-label">Stav Výběru</div>
+            <div class="status-total" id="totalCount">0 / 20</div>
+        </div>
+        
+        <div class="section-header">Období (Kliknutím filtruješ)</div>
+        <div class="criteria-list" id="criteriaList"></div>
+        
+        <div class="section-header">Literární druh (Kliknutím filtruješ)</div>
+        <div class="criteria-list" id="genreList"></div>
+
+        <div class="section-header">Můj seznam</div>
+        <div class="selected-books" id="selectedList"></div>
+        
+        <div class="status-box"><div class="status-label">Stav Výběru</div><div class="status-total" id="totalCount">0 / 20</div></div>
         <div class="section-header">Období</div><div class="criteria-list" id="criteriaList"></div>
-        <div class="section-header">Druh</div><div class="criteria-list" id="genreList"></div>
-        <div class="section-header">Můj výběr</div><div class="selected-books" id="selectedList"></div>
+        <div class="section-header">Literární druh</div><div class="criteria-list" id="genreList"></div>
+        <div class="section-header">Můj seznam</div><div class="selected-books" id="selectedList"></div>
         <div class="action-btns">
-            <button class="btn-modern btn-share" onclick="generateQR()">📲 Sdílet (QR)</button>
+            <button class="btn-modern btn-install" onclick="triggerInstall()">💻 Přidat na plochu</button>
+            <button class="btn-modern btn-share" onclick="generateQR()">📲 Sdílet seznam (QR)</button>
             <button class="btn-modern btn-pdf" id="btnPdf" onclick="generatePDF()">🖨 Stáhnout PDF</button>
+            <button class="btn-modern btn-clear" onclick="showClearModal()">✖ Vymazat vše</button>
+            <button class="btn-modern btn-clear" onclick="document.getElementById('clearModal').style.display='flex'">✖ Vymazat vše</button>
         </div>
     </div>
 
     <div class="main-content">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Hledat dílo či autora..." onkeyup="renderBooks()">
+        </div>
+        <div class="list-header"><div></div><div>Dílo</div><div>Autor</div><div style="text-align: center;">Období</div><div style="text-align: center;">Druh</div></div>
         <div class="search-bar"><input type="text" id="searchInput" placeholder="Hledat dílo či autora..." onkeyup="renderBooks()"></div>
         <div class="books-container" id="booksContainer"></div>
     </div>
 
     <script>
-        // Kompletní seznam knih
+        let windowShareUrl = "";
+
+        function scrollToTop() {
+            document.getElementById('booksContainer').scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('sidebarContainer').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleScroll(e) {
+            const btn = document.getElementById('scrollTopBtn');
+            if (e.target.scrollTop > 300) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        }
+
+        document.getElementById('booksContainer').addEventListener('scroll', handleScroll);
+        document.getElementById('sidebarContainer').addEventListener('scroll', handleScroll);
+
+        function showAlert(message, title = "Upozornění") {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+        function closeAlert() { document.getElementById('alertModal').style.display = 'none'; }
+        
+        function closeModals() {
+            document.getElementById('installModal').style.display = 'none';
+            document.getElementById('qrModal').style.display = 'none';
+            document.getElementById('clearModal').style.display = 'none';
+            document.getElementById('alertModal').style.display = 'none';
+            closeSharedModal();
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js').catch(err => {});
+            });
+        }
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+        function triggerInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+            } else {
+                document.getElementById('installModal').style.display = 'flex';
+            }
+        }
+    <div class="modal-overlay" id="clearModal">
+        <div class="modal-content">
+            <h3>Smazat vše?</h3><p>Opravdu chceš vymazat celý svůj výběr?</p>
+            <div style="display:flex; gap:10px;"><button class="modal-close" style="flex:1;" onclick="closeModals()">Ne</button>
+            <button class="modal-close" style="background:var(--accent-red); color:white; border:none; flex:1;" onclick="confirmClearSelection()">Smazat</button></div>
+        </div>
+    </div>
+
+    <script>
         const books = [
             { id: 1, author: "Alighieri Dante", title: "Božská komedie", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
             { id: 2, author: "Neznámý", title: "Bible", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 3, author: "Boccaccio, G.", title: "Dekameron", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 4, author: "Cervantes, M.", title: "Důmyslný rytíř Don Quijote de la Mancha", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 5, author: "Neznámý", title: "Epos o Gilgamešovi", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
-            { id: 6, author: "Goethe, J. W.", title: "Utrpení mladého Werthera", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 7, author: "Goethe, J. W.", title: "Faust", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 8, author: "Homér", title: "Odysea", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
-            { id: 9, author: "Karel IV.", title: "Vita Caroli", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 10, author: "Komenský, J. A.", title: "Labyrint světa a ráj srdce", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 11, author: "Neznámý", title: "Legenda o sv. Kateřině", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
-            { id: 12, author: "Machiavelli, N.", title: "Vladař", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 13, author: "Moliére", title: "Lakomec", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 14, author: "Moliére", title: "Tartuffe", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 15, author: "Shakespeare, W.", title: "Hamlet", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 16, author: "Shakespeare, W.", title: "Král Lear", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 17, author: "Shakespeare, W.", title: "Othelo", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 18, author: "Shakespeare, W.", title: "Romeo a Julie", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 19, author: "Shakespeare, W.", title: "Sonety", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
-            { id: 20, author: "Shakespeare, W.", title: "Zkrocení zlé ženy", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 21, author: "Sofokles", title: "Oidipus", crit: 1, critName: "Do konce 18. st.", genre: "drama" },
-            { id: 22, author: "Swift, J.", title: "Gulliverovy cesty", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 23, author: "Bediér (zprac.)", title: "Tristan a Isolda", crit: 1, critName: "Do konce 18. st.", genre: "próza" },
-            { id: 24, author: "Villon, F.", title: "Závěť", crit: 1, critName: "Do konce 18. st.", genre: "poezie" },
-            { id: 25, author: "Austenová, J.", title: "Pýcha a předsudek", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 26, author: "Balzac, H.", title: "Otec Goriot", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 27, author: "Baudelaire, Ch.", title: "Květy zla", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 28, author: "Caroll, L.", title: "Alenka v kraji divů za zrcadlem", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 29, author: "Dickens, Ch.", title: "Nadějné vyhlídky", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 30, author: "Dickens, Ch.", title: "Oliver Twist", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 31, author: "Dostojevskij, F. M.", title: "Idiot", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 32, author: "Dostojevskij, F. M.", title: "Zločin a trest", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 33, author: "Flaubert, G.", title: "Salambo", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 34, author: "Flaubert, G.", title: "Paní Bovaryová", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 35, author: "Hugo, V.", title: "Bídníci", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 36, author: "Hugo, V.", title: "Chrám Matky Boží v Paříži", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 37, author: "Maupassant, G.", title: "Miláček", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 38, author: "Poe, E. A.", title: "Havran", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 39, author: "Poe, E. A.", title: "Povídky", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 40, author: "Puškin, A. S.", title: "Evžen Oněgin", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 41, author: "Stendhal", title: "Červený a černý", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 42, author: "Tolstoj, L. N.", title: "Anna Kareninová", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 43, author: "Wilde, O.", title: "Obraz Doriana Graye", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 44, author: "Zola, E.", title: "Zabiják", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 45, author: "Arbes, J.", title: "Svatý Xaverius", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 46, author: "Březina, O.", title: "Tajemné dálky", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 47, author: "Čech, S.", title: "Nový epochální výlet pana Broučka...", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 48, author: "Erben, K. J.", title: "Kytice", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 49, author: "Havlíček Borovský, K.", title: "Křest sv. Vladimíra", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 50, author: "Mácha, K. H.", title: "Máj", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 51, author: "Mácha, K. H.", title: "Cikáni", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 52, author: "Němcová, B.", title: "Babička", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 53, author: "Němcová, B.", title: "Divá Bára", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 54, author: "Neruda, J.", title: "Balady a romance", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 55, author: "Neruda, J.", title: "Písně kosmické", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 56, author: "Neruda, J.", title: "Povídky malostranské", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 57, author: "Rais, J. V.", title: "Kalibův zločin", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 58, author: "Šlejhar, J. K.", title: "Kuře melancholik", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 59, author: "Vrchlický, J.", title: "Okna v bouři", crit: 2, critName: "19. století", genre: "poezie" },
-            { id: 60, author: "Zeyer, J.", title: "Tři legendy o krucifixu", crit: 2, critName: "19. století", genre: "próza" },
-            { id: 61, author: "Beckett, S.", title: "Čekání na Godota", crit: 3, critName: "Světová 20.-21. st.", genre: "drama" },
-            { id: 62, author: "Čapek, K.", title: "Loupežník", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 63, author: "Čapek, K.", title: "RUR", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 64, author: "Čapek, K.", title: "Bílá nemoc", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 65, author: "Čapek, K.", title: "Matka", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 66, author: "Čapkové, K. a J.", title: "Ze života hmyzu", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 67, author: "Čechov, A. P.", title: "Višňový sad", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 68, author: "Dousková, I.", title: "Hrdý Budžes", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 69, author: "Durrenmatt, F.", title: "Fyzikové", crit: 3, critName: "Světová 20.-21. st.", genre: "drama" },
-            { id: 70, author: "Gogol, N. V.", title: "Revizor", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 71, author: "Havel, V.", title: "Largo desolato", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 72, author: "Havel, V.", title: "Zahradní slavnost", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 73, author: "Havel, V.", title: "Vernisáž", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 74, author: "Ibsen, H.", title: "Domeček pro panenky (Nora)", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 75, author: "Mrštíkové, A. a V.", title: "Maryša", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 76, author: "Miller, A.", title: "Smrt obchodního cestujícího", crit: 3, critName: "Světová 20.-21. st.", genre: "drama" },
-            { id: 77, author: "Preissová, G.", title: "Její pastorkyňa", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 78, author: "Rostand, E.", title: "Cyrano z Bergeracu", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 79, author: "Shaw, G. B.", title: "Pygmalion", crit: 3, critName: "Světová 20.-21. st.", genre: "drama" },
-            { id: 80, author: "Tyl, J. K.", title: "Strakonický dudák", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 81, author: "Smoljak, L., Svěrák, Z.", title: "České nebe", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 82, author: "Smoljak, L., Svěrák, Z.", title: "Dobytí severního pólu", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 83, author: "Voskovec, J., Werich, J.", title: "Vest pocket revue", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 84, author: "Voskovec, J., Werich, J.", title: "Balada z hadrů", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 85, author: "Voskovec, J., Werich, J.", title: "Osel a stín", crit: 4, critName: "Česká 20.-21. st.", genre: "drama" },
-            { id: 86, author: "Vrchlický, J.", title: "Noc na Karlštejně", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 87, author: "Wilde, O.", title: "Jak je důležité míti Filipa", crit: 2, critName: "19. století", genre: "drama" },
-            { id: 88, author: "Williams, T.", title: "Kočka na rozpálené plechové střeše", crit: 3, critName: "Světová 20.-21. st.", genre: "drama" },
-            { id: 89, author: "Bezruč, P.", title: "Slezské písně", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 90, author: "Gellner, F.", title: "Po nás ať přijde potopa", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 91, author: "Gellner, F.", title: "Radosti života", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 92, author: "Holan, V.", title: "Příběhy", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 93, author: "Holan, V.", title: "Noc s Hamletem", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 94, author: "Hrabě, V.", title: "Blues pro bláznivou holku", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 95, author: "Hrubín, F.", title: "Romance pro křídlovku", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 96, author: "Hrubín, F.", title: "Hirošima", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 97, author: "Kolář, J.", title: "Dny v roce", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 98, author: "Kryl, K.", title: "Kníška Karla Kryla", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 99, author: "Morgenstern, Ch.", title: "Šibeniční písně", crit: 3, critName: "Světová 20.-21. st.", genre: "poezie" },
-            { id: 100, author: "Nezval, V.", title: "Pantomima", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 101, author: "Nezval, V.", title: "Edison", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 102, author: "Orten, J.", title: "Elegie", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 103, author: "Seifert, J.", title: "Býti básníkem", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 104, author: "Seifert, J.", title: "Maminka", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 105, author: "Seifert, J.", title: "Morový sloup", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 106, author: "Seifert, J.", title: "Píseň o Viktorce", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 107, author: "Skácel, J.", title: "Smuténka", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 108, author: "Skácel, J.", title: "Co zbylo z anděla", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 109, author: "Toman, K.", title: "Měsíce", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 110, author: "Wolker, J.", title: "Těžká hodina", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 111, author: "Zahradníček, J.", title: "Pokušení smrti", crit: 4, critName: "Česká 20.-21. st.", genre: "poezie" },
-            { id: 112, author: "Ajtmatov, Č.", title: "Popraviště", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 113, author: "Amis, K.", title: "Šťastný Jim", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 114, author: "Böll, H.", title: "Klaunovy názory", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 115, author: "Bulgakov, M.", title: "Mistr a Markétka", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 116, author: "Bradbury, R.", title: "451 stupňů Fahrenheita", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 117, author: "Bradbury, R.", title: "Marťanská kronika", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 118, author: "Camus, A.", title: "Cizinec", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 119, author: "Clarke, A. C.", title: "2001: Vesmírná odysea", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 120, author: "Coelho, P.", title: "Alchymista", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 121, author: "Dreiser, T.", title: "Americká tragedie", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 122, author: "Eco, U.", title: "Jméno růže", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 123, author: "Fitzgerald, F. S.", title: "Velký Gatsby", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 124, author: "Golding, W.", title: "Pán much", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 125, author: "Grass, G.", title: "Plechový bubínek", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 126, author: "Hesse, H.", title: "Siddhártha", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 127, author: "Huxley, A.", title: "Krásný nový svět", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 128, author: "Irving, J.", title: "Svět podle Garpa", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 129, author: "Irving, J.", title: "Modlitba pro Owena Meanyho", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 130, author: "Hemingway, E.", title: "Komu zvoní hrana", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 131, author: "Hemingway, E.", title: "Stařec a moře", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 132, author: "Joyce, J.", title: "Odysseus", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 133, author: "Kesey, K.", title: "Vyhoďme ho z kola ven", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 134, author: "Kerouac, J.", title: "Na cestě", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 135, author: "London, J.", title: "Tulák po hvězdách", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 136, author: "Marquéz, G. G.", title: "Sto roků samoty", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 137, author: "Marquéz, G. G.", title: "Kronika ohlášené smrti", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 138, author: "McCarthy, C.", title: "Cesta", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 139, author: "Murakami, H.", title: "Norské dřevo", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 140, author: "Nabokov, V.", title: "Lolita", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 141, author: "Orwell, G.", title: "1984", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 142, author: "Orwell, G.", title: "Farma zvířat", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 143, author: "Pasternak, B.", title: "Doktor Živago", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 144, author: "Remarque, E. M.", title: "Na západní frontě klid", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 145, author: "Rolland, R.", title: "Petr a Lucie", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 146, author: "Saint-Exupéry A. de", title: "Malý princ", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 147, author: "Salinger, J. D.", title: "Kdo chytá v žitě", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 148, author: "Sartre, J. P.", title: "Zeď", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 149, author: "Steinbeck, J.", title: "O myších a lidech", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 150, author: "Styron, W.", title: "Sophiina volba", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 151, author: "Solženicyn, A.", title: "Jeden den Ivana Denisoviče", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 152, author: "Šolochov, A. M.", title: "Osud člověka", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 153, author: "Tolkien, J. R. R.", title: "Hobit", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 154, author: "Wells, H. G.", title: "Válka světů", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 155, author: "Woolfová, V.", title: "Paní Dallowayová", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 156, author: "Wyndham, J.", title: "Den trifidů", crit: 3, critName: "Světová 20.-21. st.", genre: "próza" },
-            { id: 157, author: "Balabán, J.", title: "Zeptej se táty", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 158, author: "Boučková, T.", title: "Indiánský běh", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 159, author: "Čapek, K.", title: "Boží muka", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 160, author: "Čapek, K.", title: "Anglické listy", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 161, author: "Čapek, K.", title: "Továrna na absolutno", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 162, author: "Čapek, K.", title: "Krakatit", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 163, author: "Čapek, K.", title: "Válka s mloky", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 164, author: "Čapek, K.", title: "Povídky z jedné kapsy", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 165, author: "Drda, J.", title: "Němá barikáda", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 166, author: "Dyk, V.", title: "Krysař", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 167, author: "Durych, J.", title: "Rekviem", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 168, author: "Fuks, L.", title: "Spalovač mrtvol", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 169, author: "Havlíček, J.", title: "Petrolejové lampy", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 170, author: "Hostovský, E.", title: "Žhář", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 171, author: "Hašek, J.", title: "Osudy dobrého vojáka Švejka", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 172, author: "Hrabal, B.", title: "Obsluhoval jsem anglického krále", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 173, author: "Hrabal, B.", title: "Příliš hlučná samota", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 174, author: "Hrabal, B.", title: "Perlička na dně", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 175, author: "Hrabal, B.", title: "Ostře sledované vlaky", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 176, author: "Jirotka, Z.", title: "Saturnin", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 177, author: "Hůlová, P.", title: "Paměť mojí babičce", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 178, author: "Kafka, F.", title: "Proces", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 179, author: "Kafka, F.", title: "Proměna", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 180, author: "Kantůrková, E.", title: "Přítelkyně z domu smutku", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 181, author: "Kaplický, V.", title: "Kladivo na čarodějnice", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 182, author: "Klíma, I.", title: "Má veselá jitra", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 183, author: "Kohout, P.", title: "Katyně", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 184, author: "Kohout, P.", title: "Kde je zakopán pes", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 185, author: "Körner, V.", title: "Adelheid", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 186, author: "Kundera, M.", title: "Směšné lásky", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 187, author: "Kundera, M.", title: "Nesnesitelná lehkost bytí", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 188, author: "Kundera, M.", title: "Valčík na rozloučenou", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 189, author: "Kundera, M.", title: "Žert", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 190, author: "Legátová, K.", title: "Želary", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 191, author: "Legátová, K.", title: "Jozova Hanula", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 192, author: "Loukotková, J.", title: "Navzdory básník zpívá", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 193, author: "Lustig, A.", title: "Modlitba pro Kateřinu Horovitzovou", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 194, author: "Mňačko, L.", title: "Smrt si říká Engelchen", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 195, author: "Mornštajnová, A.", title: "Hana", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 196, author: "Mornštajnová, A.", title: "Listopád", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 197, author: "Olbracht, I.", title: "Nikola Šuhaj loupežník", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 198, author: "Otčenášek, J.", title: "Romeo, Julie a tma", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 199, author: "Pavel, O.", title: "Jak jsem potkal ryby", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 200, author: "Pavel, O.", title: "Smrt krásných srnců", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 201, author: "Pecka, K.", title: "Na co umírají muži", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 202, author: "Pelc, J.", title: "…a bude hůř", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 203, author: "Poláček, K.", title: "Bylo nás pět", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 204, author: "Rudiš, J.", title: "Národní třída", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 205, author: "Škvorecký, J.", title: "Legenda Emöke", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 206, author: "Škvorecký, J.", title: "Mirákl", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 207, author: "Škvorecký, J.", title: "Zbabělci", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 208, author: "Tučková, K.", title: "Vyhnání Gerty Schnirch", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 209, author: "Tučková, K.", title: "Žítkovské bohyně", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 210, author: "Vančura, V.", title: "Marketa Lazarová", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 211, author: "Vančura, V.", title: "Rozmarné léto", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" },
-            { id: 212, author: "Viewegh, M.", title: "Báječná léta pod psa", crit: 4, critName: "Česká 20.-21. st.", genre: "próza" }
-        ];
-
-        let selectedIds = [];
+@@ -577,50 +426,34 @@
         let pendingSharedIds = [];
         let activeCritFilter = null;
         let activeGenreFilter = null;
         let windowShareUrl = "";
 
         window.onload = () => {
+            document.getElementById('studentName').value = localStorage.getItem('studentName') || '';
+            document.getElementById('studentClass').value = localStorage.getItem('studentClass') || '';
+            document.getElementById('schoolYear').value = localStorage.getItem('schoolYear') || '';
             const savedName = localStorage.getItem('studentName');
             const savedClass = localStorage.getItem('studentClass');
             const savedYear = localStorage.getItem('schoolYear');
@@ -381,6 +384,22 @@
                 localStorage.setItem('studentClass', document.getElementById('studentClass').value);
                 localStorage.setItem('schoolYear', document.getElementById('schoolYear').value);
             };
+            document.getElementById('studentName').addEventListener('input', saveInfo);
+            document.getElementById('studentClass').addEventListener('input', saveInfo);
+            document.getElementById('schoolYear').addEventListener('input', saveInfo);
+
+            try {
+                const savedBooks = localStorage.getItem('selectedBooks');
+                if (savedBooks) {
+                    const parsed = JSON.parse(savedBooks);
+                    if (Array.isArray(parsed)) {
+                        selectedIds = parsed;
+                    } else {
+                        localStorage.removeItem('selectedBooks');
+                    }
+                }
+            } catch(e) {
+                localStorage.removeItem('selectedBooks');
             ['studentName','studentClass','schoolYear'].forEach(id => document.getElementById(id).addEventListener('input', saveInfo));
 
             const savedBooks = localStorage.getItem('selectedBooks');
@@ -391,27 +410,63 @@
             if (booksParam) {
                 const ids = booksParam.split(',').map(Number);
                 pendingSharedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
-                if (pendingSharedIds.length > 0) {
-                    const container = document.getElementById('sharedBooksList');
-                    container.innerHTML = '';
-                    pendingSharedIds.forEach((id, index) => {
-                        const book = books.find(b => b.id === id);
-                        container.innerHTML += `<div><strong>${index+1}.</strong> ${book.author} - ${book.title}</div>`;
-                    });
-                    document.getElementById('sharedListModal').style.display = 'flex';
-                }
+                if (pendingSharedIds.length > 0) showSharedListModal();
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
+
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const booksParam = urlParams.get('books');
+                if (booksParam) {
+                    const ids = booksParam.split(',').map(Number);
+                    pendingSharedIds = ids.filter(id => !isNaN(id) && books.some(b => b.id === id)).slice(0, 20);
+                    
+                    if (pendingSharedIds.length > 0) {
+                        showSharedListModal();
+                    }
+                    // Vyčistíme URL od parametru, ať to nestraší
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            } catch(e) { console.error(e); }
+            
             updateApp();
         };
 
+@@ -629,366 +462,168 @@
+            container.innerHTML = '';
+            pendingSharedIds.forEach((id, index) => {
+                const book = books.find(b => b.id === id);
+                container.innerHTML += `<div><strong>${index + 1}.</strong> ${book.author} - ${book.title}</div>`;
+                container.innerHTML += `<div><strong>${index+1}.</strong> ${book.author} - ${book.title}</div>`;
+            });
+            document.getElementById('sharedListModal').style.display = 'flex';
+        }
+
+        function closeSharedModal() {
+            document.getElementById('sharedListModal').style.display = 'none';
+            pendingSharedIds = [];
+        }
+
         function acceptSharedList() {
             selectedIds = [...pendingSharedIds];
+            closeSharedModal();
             closeModals();
             updateApp();
+            if(window.innerWidth <= 900) { switchMobileTab('list'); }
             if(window.innerWidth <= 900) switchMobileTab('list');
         }
 
+        function switchMobileTab(tab) {
+            if(tab === 'list') {
+                document.body.classList.add('show-mylist');
+                document.getElementById('navList').classList.add('active');
+                document.getElementById('navBooks').classList.remove('active');
+            } else {
+                document.body.classList.remove('show-mylist');
+                document.getElementById('navBooks').classList.add('active');
+                document.getElementById('navList').classList.remove('active');
+            }
+            scrollToTop();
         function closeModals() {
             document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
         }
@@ -429,7 +484,9 @@
 
         function togglePersonalInfo() {
             const content = document.getElementById('personalInfoContent');
+            const arrow = document.getElementById('infoArrow');
             content.classList.toggle('open');
+            arrow.innerText = content.classList.contains('open') ? '▲' : '▼';
             document.getElementById('infoArrow').innerText = content.classList.contains('open') ? '▲' : '▼';
         }
 
@@ -437,27 +494,94 @@
             const filterText = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('booksContainer');
             container.innerHTML = '';
+
             books.forEach(book => {
                 const matchesText = book.title.toLowerCase().includes(filterText) || book.author.toLowerCase().includes(filterText);
                 const matchesCrit = activeCritFilter === null || book.crit === activeCritFilter;
                 const matchesGenre = activeGenreFilter === null || book.genre === activeGenreFilter;
+
                 if (matchesText && matchesCrit && matchesGenre) {
                     const isSelected = selectedIds.includes(book.id);
                     const card = document.createElement('div');
                     card.className = `book-card ${isSelected ? 'selected' : ''}`;
                     card.onclick = () => toggleBook(book.id);
+                    
+                    card.innerHTML = `
+                        <div class="check-circle"></div>
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">${book.author}</div>
+                        <div class="book-crit">${book.critName}</div>
+                        <div class="book-genre">${book.genre}</div>
+                    `;
                     card.innerHTML = `<div class="check-circle"></div><div class="book-title">${book.title}</div><div class="book-author">${book.author}</div><div class="book-crit">${book.critName}</div><div class="book-genre">${book.genre}</div>`;
                     container.appendChild(card);
                 }
             });
         }
 
+        function toggleCritFilter(critId) { activeCritFilter = activeCritFilter === critId ? null : critId; updateApp(); }
+        function toggleGenreFilter(genre) { activeGenreFilter = activeGenreFilter === genre ? null : genre; updateApp(); }
+
         function toggleBook(id) {
+            if (selectedIds.includes(id)) {
+                selectedIds = selectedIds.filter(bookId => bookId !== id);
+            } else {
+                if (selectedIds.length >= 20) {
+                    showAlert("Už máš vybráno 20 děl! Pro přidání jiného musíš nějaké smazat.");
+                    return;
+                }
+
+                const bookToAdd = books.find(b => b.id === id);
+                
+                if (bookToAdd.author !== "Neznámý") {
+                    const sameAuthorBooks = selectedIds.map(sid => books.find(b => b.id === sid)).filter(b => b.author === bookToAdd.author);
+
+                    if (sameAuthorBooks.length > 0) {
+                        if (bookToAdd.author === "Čapek, K.") {
+                            if (sameAuthorBooks.length >= 2) {
+                                showAlert("Od Karla Čapka můžeš mít maximálně 2 díla (1 prózu a 1 drama).");
+                                return;
+                            }
+                            if (sameAuthorBooks[0].genre === bookToAdd.genre) {
+                                showAlert(`Od Karla Čapka už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (próza/drama).`);
+                                return;
+                            }
+                        } else if (bookToAdd.author === "Shakespeare, W.") {
+                            if (sameAuthorBooks.length >= 2) {
+                                showAlert("Od Williama Shakespeara můžeš mít maximálně 2 díla (1 poezii a 1 drama).");
+                                return;
+                            }
+                            if (sameAuthorBooks[0].genre === bookToAdd.genre) {
+                                showAlert(`Od W. Shakespeara už máš vybraný druh: ${sameAuthorBooks[0].genre}. Můžeš si přidat ještě dílo, ale musí to být jiný literární druh (poezie/drama).`);
+                                return;
+                            }
+                        } else {
+                            showAlert(`Od autora ${bookToAdd.author} už máš vybrané dílo. Podle pravidel smíš mít od jednoho autora max. 1 knihu (s výjimkou K. Čapka a W. Shakespeara).`);
+                            return;
+                        }
+                    }
+                }
+                
+                selectedIds.push(id);
+            }
             if (selectedIds.includes(id)) selectedIds = selectedIds.filter(bid => bid !== id);
             else if (selectedIds.length < 20) selectedIds.push(id);
-            else showAlert("Už máš 20 děl!");
+            else showAlert("Už máš 20 knih!");
             updateApp();
         }
+
+        function removeBook(id) { selectedIds = selectedIds.filter(bookId => bookId !== id); updateApp(); }
+        function showClearModal() { if(selectedIds.length > 0) { document.getElementById('clearModal').style.display = 'flex'; } }
+        function confirmClearSelection() { selectedIds = []; closeModals(); updateApp(); }
+
+        function checkMaturitaRules() {
+            if (selectedIds.length !== 20) {
+                showAlert("Musíš mít vybráno přesně 20 knih!", "Nesplněno pravidlo");
+                return false;
+            }
+
+            let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+            let genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
 
         function updateApp() {
             localStorage.setItem('selectedBooks', JSON.stringify(selectedIds));
@@ -468,35 +592,90 @@
             const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
             const genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
             selectedIds.forEach(id => {
+                const book = books.find(b => b.id === id);
+                counts[book.crit]++;
+                genreCounts[book.genre]++;
                 const b = books.find(x => x.id === id);
-                if(b) { counts[b.crit]++; genreCounts[b.genre]++; }
+                counts[b.crit]++;
+                genreCounts[b.genre]++;
             });
 
+            if (counts[1] < 2) { showAlert("Do konce 18. století musíš mít min. 2 díla.", "Chybí období"); return false; }
+            if (counts[2] < 3) { showAlert("Pro 19. století musíš mít min. 3 díla.", "Chybí období"); return false; }
+            if (counts[3] < 4) { showAlert("Pro Světovou literaturu 20./21. st. musíš mít min. 4 díla.", "Chybí období"); return false; }
+            if (counts[4] < 5) { showAlert("Pro Českou literaturu 20./21. st. musíš mít min. 5 děl.", "Chybí období"); return false; }
             document.getElementById('criteriaList').innerHTML = [1,2,3,4].map(c => {
                 const names = ["","Do 18. st. (min 2)","19. století (min 3)","Světová 20./21. st. (min 4)","Česká 20./21. st. (min 5)"];
                 const mins = [0,2,3,4,5];
                 return `<button class="crit-btn ${activeCritFilter===c?'active-filter':''}" onclick="activeCritFilter=activeCritFilter===${c}?null:${c};updateApp();"><span>${names[c]}</span><span class="count ${counts[c]>=mins[c]?'met':'unmet'}">${counts[c]}/${mins[c]}</span></button>`;
             }).join('');
 
+            if (genreCounts['próza'] < 2) { showAlert("V seznamu musí být minimálně 2 prózy.", "Chybí literární druh"); return false; }
+            if (genreCounts['poezie'] < 2) { showAlert("V seznamu musí být minimálně 2 poezie.", "Chybí literární druh"); return false; }
+            if (genreCounts['drama'] < 2) { showAlert("V seznamu musí být minimálně 2 dramata.", "Chybí literární druh"); return false; }
             document.getElementById('genreList').innerHTML = ['próza','poezie','drama'].map(g => {
                 return `<button class="crit-btn ${activeGenreFilter===g?'active-filter':''}" onclick="activeGenreFilter=activeGenreFilter==='${g}'?null:'${g}';updateApp();"><span>${g.charAt(0).toUpperCase()+g.slice(1)} (min 2)</span><span class="count ${genreCounts[g]>=2?'met':'unmet'}">${genreCounts[g]}/2</span></button>`;
             }).join('');
 
+            return true;
+        }
+
+        function copyShareLink() {
+            if (windowShareUrl) {
+                navigator.clipboard.writeText(windowShareUrl).then(() => {
+                    const btn = document.getElementById('copyLinkBtn');
+                    const originalText = btn.innerText;
+                    btn.innerText = "✓ Odkaz zkopírován";
+                    btn.style.backgroundColor = "var(--accent-green)";
+                    btn.style.color = "white";
+                    setTimeout(() => {
+                        btn.innerText = "🔗 Zkopírovat odkaz";
+                        btn.style.backgroundColor = "var(--bg-hover)";
+                        btn.style.color = "var(--text-main)";
+                    }, 2000);
+                });
+            }
             const selList = document.getElementById('selectedList');
             selList.innerHTML = '';
             selectedIds.forEach(id => {
                 const b = books.find(x => x.id === id);
-                if(b) selList.innerHTML += `<div class="selected-item"><div class="selected-item-info"><strong>${b.title}</strong><span class="selected-item-author">${b.author}</span></div><button class="btn-remove" onclick="toggleBook(${b.id})">✖</button></div>`;
+                selList.innerHTML += `<div class="selected-item"><div class="selected-item-info"><strong>${b.title}</strong><span class="selected-item-author">${b.author}</span></div><button class="btn-remove" onclick="toggleBook(${b.id})">✖</button></div>`;
             });
         }
 
         function generateQR() {
+            if (!checkMaturitaRules()) return;
+            
             const currentUrl = window.location.href.split(/[?#]/)[0];
+            const shareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
+            
+            windowShareUrl = shareUrl; // Uložit pro kopírování
+
+            document.getElementById('qrWarning').style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
+
             windowShareUrl = `${currentUrl}?books=${selectedIds.join(',')}`;
             document.getElementById('qrModal').style.display = 'flex';
-            setTimeout(() => { new QRious({ element: document.getElementById('qrCanvas'), value: windowShareUrl, size: 200 }); }, 100);
+
+            setTimeout(() => {
+                try {
+                    const canvas = document.getElementById('qrCanvas');
+                    const qr = new QRious({
+                        element: canvas,
+                        value: shareUrl,
+                        size: 200,
+                        background: 'white',
+                        foreground: 'black',
+                        level: 'L'
+                    });
+                } catch(e) {
+                    console.error("QR Error", e);
+                }
+                new QRious({ element: document.getElementById('qrCanvas'), value: windowShareUrl, size: 200 });
+            }, 100);
         }
 
+        function generatePDF() {
+            if (!checkMaturitaRules()) return;
         function copyShareLink() {
             navigator.clipboard.writeText(windowShareUrl).then(() => {
                 const btn = document.getElementById('copyLinkBtn');
@@ -506,78 +685,205 @@
         }
 
         function generatePDF() {
-            if (selectedIds.length !== 20) { showAlert("Musíš mít vybráno přesně 20 knih!"); return; }
             const sName = document.getElementById('studentName').value;
             const sClass = document.getElementById('studentClass').value;
             const sYear = document.getElementById('schoolYear').value;
 
-            // PŘESNÉ ROZVRŽENÍ PODLE OBRÁZKU
             let printHTML = `
-                <div style="padding: 10mm 15mm; font-family: Arial, sans-serif; color: #000; background: #fff; position: relative; min-height: 275mm;">
+                <div style="background-color: #ffffff !important; color: #000000 !important; width: 210mm; min-height: 297mm; padding: 20mm; box-sizing: border-box; font-family: Arial, sans-serif;">
                     
-                    <div style="position: relative; margin-bottom: 25px;">
-                        <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" style="width: 42px; position: absolute; left: 0; top: -5px;">
-                        <div style="margin-left: 65px; border-bottom: 1.2px solid #000; padding-bottom: 2px;">
-                            <div style="text-align: center; font-size: 8.5pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
-                        </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <div style="padding: 15mm; font-family: Arial, sans-serif; color: black; line-height: 1.2;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <tr>
+                            <td style="width: 60px; vertical-align: top; text-align: left;">
+                                <img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" crossorigin="anonymous" style="width: 50px; height: auto; display: block; margin-top: 10px;" alt="Logo Gymnázia">
+                            </td>
+                            <td style="vertical-align: middle; padding-bottom: 10px; padding-left: 10px;">
+                                <div style="text-align: center; font-size: 8pt; color: #000000 !important; margin-bottom: 2px;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</div>
+                                <div style="border-bottom: 1px solid #000000 !important; width: 100%;"></div>
+                            </td>
+                            <td style="width: 50px;"><img src="https://dropix-sudo.github.io/maturita-cetba/logo.png" style="width: 45px;"></td>
+                            <td style="vertical-align: middle; border-bottom: 1px solid black; text-align: center; font-size: 9pt;">GYMNÁZIUM, PŘÍBRAM, LEGIONÁŘŮ 402</td>
+                        </tr>
+                    </table>
+                    
+                    <div style="text-align: center; margin-bottom: 40px; color: #000000 !important;">
+                        <h1 style="font-size: 26pt; font-weight: normal; margin: 0 0 20px 0; font-family: Arial, sans-serif;">SEZNAM ČETBY</h1>
+                        <h2 style="font-size: 11pt; font-weight: normal; margin: 0; line-height: 1.5; font-family: Arial, sans-serif;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</h2>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h1 style="font-size: 22pt; margin: 0;">SEZNAM ČETBY</h1>
+                        <p style="font-size: 9pt; margin: 5px 0;">K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY</p>
                     </div>
+                    
+                    <table style="width: 100%; font-size: 10pt; margin-bottom: 20px; color: #000000 !important; border-collapse: collapse; font-family: Arial, sans-serif;">
+                    <table style="width: 100%; font-size: 10pt; margin-bottom: 15px;">
+                        <tr>
+                            <td style="width: 1%; white-space: nowrap; padding-right: 5px;">Jméno:</td>
+                            <td style="border-bottom: 1px solid #000000 !important; text-align: center; width: 40%;">${sName || ''}</td>
+                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 20px;">Třída:</td>
+                            <td style="width: 15%; border-bottom: 1px solid #000000 !important; text-align: center;">${sClass || ''}</td>
+                            <td style="width: 1%; white-space: nowrap; padding: 0 5px 0 20px;">Školní rok:</td>
+                            <td style="width: 25%; border-bottom: 1px solid #000000 !important; text-align: center;">${sYear || ''}</td>
+                            <td>Jméno: <span style="border-bottom: 1px solid black; display:inline-block; width: 200px; text-align:center;">${sName}</span></td>
+                            <td>Třída: <span style="border-bottom: 1px solid black; display:inline-block; width: 60px; text-align:center;">${sClass}</span></td>
+                            <td>Rok: <span style="border-bottom: 1px solid black; display:inline-block; width: 100px; text-align:center;">${sYear}</span></td>
+                        </tr>
+                    </table>
 
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="font-size: 32pt; font-weight: bold; margin: 0; padding: 0;">SEZNAM ČETBY</h1>
-                        <div style="font-size: 11pt; font-weight: bold; margin-top: 10px; line-height: 1.4;">
-                            K ÚSTNÍ ZKOUŠCE Z ČESKÉHO JAZYKA A LITERATURY<br>SPOLEČNÉ ČÁSTI MATURITNÍ ZKOUŠKY
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 20px; font-size: 11pt; margin-bottom: 25px;">
-                        <div style="flex: 2;">Jméno: <span style="display: inline-block; border-bottom: 1px solid #000; width: 80%; text-align: center;">${sName || '&nbsp;'}</span></div>
-                        <div style="flex: 1;">Třída: <span style="display: inline-block; border-bottom: 1px solid #000; width: 65%; text-align: center;">${sClass || '&nbsp;'}</span></div>
-                        <div style="flex: 1.5;">Školní rok: <span style="display: inline-block; border-bottom: 1px solid #000; width: 60%; text-align: center;">${sYear || '&nbsp;'}</span></div>
-                    </div>
-
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; border: 1.5px solid #000;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt; color: #000000 !important; font-family: Arial, sans-serif; border: 2px solid #000000 !important;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 9pt; border: 1.5px solid black;">
                         <thead>
                             <tr>
-                                <th style="border: 1px solid #000; padding: 8px; width: 15%; text-align: left; font-weight: normal;">Číslo otázky</th>
-                                <th style="border: 1px solid #000; padding: 8px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
-                                <th style="border: 1px solid #000; padding: 8px; width: 50%; text-align: left; font-weight: normal;">Dílo</th>
+                                <th style="border: 1px solid #000000 !important; padding: 8px 10px; width: 1%; white-space: nowrap; text-align: left; font-weight: normal;">Číslo otázky</th>
+                                <th style="border: 1px solid #000000 !important; padding: 8px 10px; width: 35%; text-align: left; font-weight: normal;">Autor</th>
+                                <th style="border: 1px solid #000000 !important; padding: 8px 10px; width: auto; text-align: left; font-weight: normal;">Dílo</th>
+                            <tr style="background: #eee;">
+                                <th style="border: 1px solid black; padding: 4px; width: 40px;">Otázka</th>
+                                <th style="border: 1px solid black; padding: 4px; text-align:left;">Autor</th>
+                                <th style="border: 1px solid black; padding: 4px; text-align:left;">Dílo</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${selectedIds.map((id, i) => {
-                                const b = books.find(x => x.id === id);
-                                return `<tr>
-                                    <td style="border: 1px solid #000; padding: 7px 10px; text-align: center; font-weight: bold;">${i+1}</td>
-                                    <td style="border: 1px solid #000; padding: 7px 10px;">${b.author}</td>
-                                    <td style="border: 1px solid #000; padding: 7px 10px;">${b.title}</td>
-                                </tr>`;
+            `;
+
+            for (let i = 0; i < 20; i++) {
+                const book = books.find(b => b.id === selectedIds[i]);
+                printHTML += `
+                            <tr>
+                                <td style="border: 1px solid #000000 !important; padding: 6px 10px; text-align: center;"><b>${i + 1}</b></td>
+                                <td style="border: 1px solid #000000 !important; padding: 6px 10px;">${book.author}</td>
+                                <td style="border: 1px solid #000000 !important; padding: 6px 10px;">${book.title}</td>
+                            </tr>
+                `;
+            }
+
+            printHTML += `
+                            ${Array.from({length: 20}).map((_, i) => {
+                                const b = books.find(x => x.id === selectedIds[i]) || {author:"", title:""};
+                                return `<tr><td style="border: 1px solid black; padding: 4px; text-align:center; font-weight:bold;">${i+1}</td><td style="border: 1px solid black; padding: 4px;">${b.author}</td><td style="border: 1px solid black; padding: 4px;">${b.title}</td></tr>`;
                             }).join('')}
                         </tbody>
                     </table>
-
-                    <div style="margin-top: 60px; float: right; width: 260px; text-align: center; font-size: 10pt;">
-                        <div style="border-top: 1.2px solid #000; margin-bottom: 5px;"></div>
+                    
+                    <div style="margin-top: 50px; float: right; width: 250px; text-align: center; font-size: 9pt; color: #000000 !important; font-family: Arial, sans-serif;">
+                        <div style="border-bottom: 1px solid #000000 !important; margin-bottom: 5px; width: 100%;"></div>
                         podpis studenta
+                    <div style="margin-top: 30px; float: right; width: 200px; text-align: center; font-size: 8pt;">
+                        <div style="border-top: 1px solid black; margin-bottom: 5px;"></div>podpis studenta
                     </div>
+                    <div style="clear: both;"></div>
+                </div>
+            `;
+
+            if (typeof html2pdf !== 'undefined') {
+                const container = document.createElement('div');
+                container.innerHTML = printHTML;
+                const pdfName = sName ? `Seznam_cetby_${sName.replace(/\s+/g, '_')}.pdf` : 'Maturitni_seznam_cetby.pdf';
+                
+                const opt = { 
+                    margin: 0, 
+                    filename: pdfName, 
+                    image: { type: 'jpeg', quality: 1 }, 
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, 
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+                };
+                
+                const btn = document.getElementById('btnPdf');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '⏳ Generuji PDF...';
+                html2pdf().set(opt).from(container).save().then(() => { btn.innerHTML = originalText; });
+            } else {
+                document.getElementById('printArea').innerHTML = printHTML;
+                window.print();
+            }
+        }
                 </div>`;
 
-            const opt = { 
-                margin: 0, filename: 'Seznam_cetby.pdf', image: { type: 'jpeg', quality: 1 }, 
-                html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-            };
+        function updateApp() {
+            localStorage.setItem('selectedBooks', JSON.stringify(selectedIds));
+
+            renderBooks();
             
-            const btn = document.getElementById('btnPdf');
-            btn.innerText = "⏳ Generuji...";
-            html2pdf().set(opt).from(printHTML).save().then(() => btn.innerText = "🖨 Stáhnout PDF");
+            const totalCountEl = document.getElementById('totalCount');
+            totalCountEl.innerText = `${selectedIds.length} / 20`;
+            totalCountEl.style.color = selectedIds.length === 20 ? 'white' : 'white';
+            
+            const mobileBadge = document.getElementById('mobileBadge');
+            mobileBadge.innerText = `${selectedIds.length}/20`;
+            if (selectedIds.length === 20) {
+                mobileBadge.style.borderColor = 'var(--accent-yellow)';
+                mobileBadge.style.color = '#000';
+                mobileBadge.style.background = 'var(--accent-yellow)';
+            } else {
+                mobileBadge.style.borderColor = '';
+                mobileBadge.style.color = '';
+                mobileBadge.style.background = '';
+            }
+
+            let counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+            let genreCounts = { 'próza': 0, 'poezie': 0, 'drama': 0 };
+
+            selectedIds.forEach(id => {
+                const book = books.find(b => b.id === id);
+                counts[book.crit]++;
+                genreCounts[book.genre]++;
+            });
+            const opt = { margin: 0, filename: 'Seznam_cetby.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
+            html2pdf().set(opt).from(printHTML).save();
         }
 
+            const criteriaList = document.getElementById('criteriaList');
+            criteriaList.innerHTML = `
+                <button class="crit-btn ${activeCritFilter === 1 ? 'active-filter' : ''}" onclick="toggleCritFilter(1)">
+                    <span>Do 18. st. (min 2)</span><span class="count ${counts[1] >= 2 ? 'met' : 'unmet'}">${counts[1]}/2</span>
+                </button>
+                <button class="crit-btn ${activeCritFilter === 2 ? 'active-filter' : ''}" onclick="toggleCritFilter(2)">
+                    <span>19. století (min 3)</span><span class="count ${counts[2] >= 3 ? 'met' : 'unmet'}">${counts[2]}/3</span>
+                </button>
+                <button class="crit-btn ${activeCritFilter === 3 ? 'active-filter' : ''}" onclick="toggleCritFilter(3)">
+                    <span>Světová 20./21. st. (min 4)</span><span class="count ${counts[3] >= 4 ? 'met' : 'unmet'}">${counts[3]}/4</span>
+                </button>
+                <button class="crit-btn ${activeCritFilter === 4 ? 'active-filter' : ''}" onclick="toggleCritFilter(4)">
+                    <span>Česká 20./21. st. (min 5)</span><span class="count ${counts[4] >= 5 ? 'met' : 'unmet'}">${counts[4]}/5</span>
+                </button>
+            `;
+
+            const genreList = document.getElementById('genreList');
+            genreList.innerHTML = `
+                <button class="crit-btn ${activeGenreFilter === 'próza' ? 'active-filter' : ''}" onclick="toggleGenreFilter('próza')">
+                    <span>Próza (min 2)</span><span class="count ${genreCounts['próza'] >= 2 ? 'met' : 'unmet'}">${genreCounts['próza']}/2</span>
+                </button>
+                <button class="crit-btn ${activeGenreFilter === 'poezie' ? 'active-filter' : ''}" onclick="toggleGenreFilter('poezie')">
+                    <span>Poezie (min 2)</span><span class="count ${genreCounts['poezie'] >= 2 ? 'met' : 'unmet'}">${genreCounts['poezie']}/2</span>
+                </button>
+                <button class="crit-btn ${activeGenreFilter === 'drama' ? 'active-filter' : ''}" onclick="toggleGenreFilter('drama')">
+                    <span>Drama (min 2)</span><span class="count ${genreCounts['drama'] >= 2 ? 'met' : 'unmet'}">${genreCounts['drama']}/2</span>
+                </button>
+            `;
+
+            const selectedList = document.getElementById('selectedList');
+            selectedList.innerHTML = '';
+            
+            selectedIds.forEach(id => {
+                const book = books.find(b => b.id === id);
+                const item = document.createElement('div');
+                item.className = 'selected-item';
+                item.innerHTML = `
+                    <div class="selected-item-info">
+                        <strong>${book.title}</strong>
+                        <span class="selected-item-author">${book.author}</span>
+                    </div>
+                    <button class="btn-remove" onclick="removeBook(${book.id})">✖</button>
+                `;
+                selectedList.appendChild(item);
+            });
         function showAlert(m) { document.getElementById('alertMessage').innerText = m; document.getElementById('alertModal').style.display = 'flex'; }
+        function confirmClearSelection() { selectedIds = []; closeModals(); updateApp(); }
         function switchMobileTab(t) {
             document.body.classList.toggle('show-mylist', t === 'list');
             document.getElementById('navBooks').classList.toggle('active', t === 'books');
             document.getElementById('navList').classList.toggle('active', t === 'list');
-            scrollToTop();
         }
     </script>
 </body>
-</html>
